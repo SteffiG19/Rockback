@@ -446,15 +446,19 @@ async function lookupCar(num) {
   currentCar = null;
   currentCategory = null;
 
-  if (!num) return;
+  if (num.length < 2) return;
 
   try {
-    const res = await fetch(SHEET_URL + '?action=getCar&car=' + encodeURIComponent(num), { cache: 'no-store' });
-    const data = await res.json();
+    const url = SHEET_URL + '?action=getCar&car=' + encodeURIComponent(num.toUpperCase().trim());
+    const res = await fetch(url, { cache: 'no-store', redirect: 'follow' });
+    const text = await res.text();
+    let data;
+    try { data = JSON.parse(text); } catch(e) {
+      notFound.classList.add('show'); return;
+    }
 
     if (!data || !data.found) {
       notFound.classList.add('show');
-      infoCard.classList.remove('show');
       return;
     }
 
@@ -474,7 +478,6 @@ async function lookupCar(num) {
 
     infoCard.classList.add('show');
   } catch(e) {
-    // If offline or sheet not set up, show not found
     notFound.classList.add('show');
   }
 }
