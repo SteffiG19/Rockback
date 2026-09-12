@@ -462,9 +462,14 @@ async function lookupCar(num) {
     document.getElementById('car-info-vehicle').textContent = [data.year, data.make, data.model].filter(Boolean).join(' ');
 
     const chips = document.getElementById('cat-chips');
-    chips.innerHTML = data.categories.map(cat => `
-      <div class="cat-chip" onclick="selectCategory('${cat}')">${cat}</div>
-    `).join('');
+    chips.innerHTML = '';
+    data.categories.forEach(cat => {
+      const chip = document.createElement('div');
+      chip.className = 'cat-chip';
+      chip.textContent = cat;
+      chip.addEventListener('click', () => selectCategory(cat));
+      chips.appendChild(chip);
+    });
 
     infoCard.classList.add('show');
   } catch(e) {
