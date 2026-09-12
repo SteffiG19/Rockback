@@ -360,12 +360,12 @@ const GROUP_FACTORS = {
 };
 
 const CAT_GROUP = {
-  "Low with Standards 18\"": "STATIC",
-  "Low with Standards 20\"": "STATIC",
+  "Low with Standards 18: "STATIC",
+  "Low with Standards 20: "STATIC",
   "Best Stance":             "STATIC",
-  "Low and Fresh 18\"":      "BAGGED",
-  "Low and Fresh 20\"":      "BAGGED",
-  "Low and Fresh 22\"":      "BAGGED",
+  "Low and Fresh 18:      "BAGGED",
+  "Low and Fresh 20:      "BAGGED",
+  "Low and Fresh 22:      "BAGGED",
   "Best Fitment":            "BAGGED",
   "Best Paint Job":          "OVERALL",
   "Best Wrap":               "OVERALL",
@@ -454,6 +454,7 @@ async function lookupCar(num) {
 
     if (!data || !data.found) {
       notFound.classList.add('show');
+      infoCard.classList.remove('show');
       return;
     }
 
