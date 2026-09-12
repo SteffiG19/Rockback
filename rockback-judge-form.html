@@ -458,7 +458,9 @@ async function lookupCar(num) {
     }
 
     if (!data || !data.found) {
-      notFound.classList.add('show');
+      setTimeout(() => {
+        if (!currentCar) notFound.classList.add('show');
+      }, 300);
       return;
     }
 
@@ -478,7 +480,9 @@ async function lookupCar(num) {
 
     infoCard.classList.add('show');
   } catch(e) {
-    if (!currentCar) notFound.classList.add('show');
+    setTimeout(() => {
+      if (!currentCar) notFound.classList.add('show');
+    }, 300);
   }
 }
 
