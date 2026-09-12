@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<title>Rockback Car Show — Judge Scoring</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --black: #0a0a0a;
+    --red: #e8132a;
+    --red-dark: #b50e20;
+    --white: #f5f3ee;
+    --grey: #1c1c1c;
+    --grey2: #2e2e2e;
+    --grey3: #3a3a3a;
+    --text-muted: #888;
+    --amber: #f59e0b;
+    --green: #22c55e;
+    --radius: 10px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    padding-bottom: 60px;
+  }
+
+  header {
+    background: var(--red);
+    padding: 16px 20px 12px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 4px 20px rgba(232,19,42,0.4);
+  }
+  header h1 { font-family: 'Bebas Neue', sans-serif; font-size: 26px; letter-spacing: 2px; color: #fff; line-height: 1; }
+  header .sub { font-size: 10px; color: rgba(255,255,255,0.7); font-weight: 500; letter-spacing: 1px; text-transform: uppercase; }
+  .header-right { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+  .status-row { display: flex; align-items: center; gap: 6px; font-size: 12px; color: rgba(255,255,255,0.7); }
+  .status-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); }
+  .status-dot.offline { background: var(--amber); }
+  .pending-badge { display: none; background: var(--amber); color: #000; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px; }
+  .pending-badge.show { display: inline-block; }
+
+  .offline-banner {
+    display: none;
+    background: #1a1000;
+    border-bottom: 1px solid rgba(245,158,11,0.3);
+    padding: 8px 20px;
+    font-size: 12px;
+    color: var(--amber);
+    font-weight: 600;
+    text-align: center;
+  }
+  .offline-banner.show { display: block; }
+
+  main { padding: 18px 16px; max-width: 520px; margin: 0 auto; }
+
+  .card {
+    background: var(--grey);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 12px;
+    border: 1px solid #2a2a2a;
+  }
+  .card-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 10px;
+  }
+
+  select, input[type="text"], textarea {
+    width: 100%;
+    background: var(--grey2);
+    border: 1px solid #3a3a3a;
+    border-radius: 8px;
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    padding: 13px 14px;
+    appearance: none;
+    -webkit-appearance: none;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  select:focus, input:focus, textarea:focus { border-color: var(--red); }
+  textarea { resize: none; height: 70px; font-size: 14px; }
+  .select-wrap { position: relative; }
+  .select-wrap::after { content: '▾'; position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: var(--text-muted); pointer-events: none; }
+
+  /* CAR INFO CARD */
+  .car-info-card {
+    display: none;
+    background: #0d1f0d;
+    border: 1px solid rgba(34,197,94,0.25);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    margin-bottom: 12px;
+  }
+  .car-info-card.show { display: block; }
+  .car-info-name { font-size: 16px; font-weight: 600; color: var(--green); margin-bottom: 4px; }
+  .car-info-vehicle { font-size: 13px; color: var(--text-muted); margin-bottom: 10px; }
+  .cat-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .cat-chip {
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    background: var(--grey2);
+    color: var(--text-muted);
+    border: 1px solid #3a3a3a;
+    cursor: pointer;
+    transition: all 0.15s;
+    user-select: none;
+  }
+  .cat-chip.active { background: var(--red); color: #fff; border-color: var(--red); }
+  .not-found {
+    display: none;
+    background: #1a0a0a;
+    border: 1px solid rgba(232,19,42,0.2);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    margin-bottom: 12px;
+    font-size: 13px;
+    color: #ff6b6b;
+  }
+  .not-found.show { display: block; }
+
+  /* FACTORS */
+  #factors-section { display: none; }
+  .group-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .group-badge.static { background: rgba(99,102,241,0.2); color: #818cf8; }
+  .group-badge.bagged { background: rgba(245,158,11,0.2); color: var(--amber); }
+  .group-badge.overall { background: rgba(34,197,94,0.2); color: var(--green); }
+
+  .factor-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 11px 0;
+    border-bottom: 1px solid #2a2a2a;
+    gap: 12px;
+  }
+  .factor-row:last-child { border-bottom: none; }
+  .factor-name { font-size: 14px; font-weight: 500; flex: 1; line-height: 1.3; }
+  .score-control {
+    display: flex;
+    align-items: center;
+    background: var(--grey2);
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #3a3a3a;
+    flex-shrink: 0;
+  }
+  .score-btn {
+    background: none;
+    border: none;
+    color: var(--white);
+    font-size: 20px;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+    -webkit-user-select: none;
+    transition: background 0.1s;
+  }
+  .score-btn:active { background: var(--red); }
+  .score-val {
+    width: 34px;
+    text-align: center;
+    font-size: 17px;
+    font-weight: 600;
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: 1px;
+  }
+
+  .total-bar {
+    background: var(--grey);
+    border-radius: var(--radius);
+    padding: 14px 18px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border: 1px solid #2a2a2a;
+  }
+  .total-label { font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); }
+  .total-val { font-family: 'Bebas Neue', sans-serif; font-size: 38px; color: var(--red); letter-spacing: 2px; line-height: 1; }
+  .total-max { font-size: 13px; color: var(--text-muted); margin-left: 3px; }
+
+  .submit-btn {
+    width: 100%;
+    background: var(--red);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 3px;
+    padding: 18px;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    margin-top: 4px;
+  }
+  .submit-btn:active { background: var(--red-dark); transform: scale(0.98); }
+  .submit-btn:disabled { background: #444; cursor: not-allowed; }
+
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: #1a1a1a;
+    border: 1px solid #333;
+    color: var(--white);
+    padding: 12px 22px;
+    border-radius: 40px;
+    font-size: 14px;
+    font-weight: 500;
+    z-index: 999;
+    transition: transform 0.35s cubic-bezier(.34,1.56,.64,1);
+    white-space: nowrap;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+    max-width: 90vw;
+    text-align: center;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+  .toast.success { border-color: var(--green); color: var(--green); }
+  .toast.error { border-color: var(--red); color: #ff6b6b; }
+  .toast.warn { border-color: var(--amber); color: var(--amber); }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>Rockback</h1>
+    <div class="sub">Car Show · Judge Scoring</div>
+  </div>
+  <div class="header-right">
+    <div class="status-row">
+      <span class="status-dot" id="status-dot"></span>
+      <span id="status-text">Online</span>
+    </div>
+    <span class="pending-badge" id="pending-badge"></span>
+  </div>
+</header>
+
+<div class="offline-banner" id="offline-banner">
+  ⚠ No signal — scores saved locally and will send automatically when connection returns
+</div>
+
+<main>
+
+  <!-- JUDGE -->
+  <div class="card">
+    <div class="card-label">Judge</div>
+    <div class="select-wrap">
+      <select id="judge-select">
+        <option value="">— Select your name —</option>
+        <option>Judge 1</option>
+        <option>Judge 2</option>
+        <option>Judge 3</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- CAR NUMBER -->
+  <div class="card">
+    <div class="card-label">Car / Parking Spot Number</div>
+    <input type="text" id="car-number" placeholder="e.g. A12 or 042"
+      maxlength="10" autocomplete="off" autocorrect="off"
+      autocapitalize="characters" spellcheck="false"
+      oninput="onCarNumberInput(this)"/>
+  </div>
+
+  <!-- CAR INFO (loaded from registrations) -->
+  <div class="car-info-card" id="car-info-card">
+    <div class="car-info-name" id="car-info-name"></div>
+    <div class="car-info-vehicle" id="car-info-vehicle"></div>
+    <div class="card-label" style="margin-bottom:8px">Entered Categories — tap to score</div>
+    <div class="cat-chips" id="cat-chips"></div>
+  </div>
+
+  <!-- NOT FOUND -->
+  <div class="not-found" id="not-found">
+    ⚠ Car number not found in registrations. Check the number and try again.
+  </div>
+
+  <!-- FACTORS -->
+  <div id="factors-section">
+    <div class="card">
+      <div id="group-badge-wrap"></div>
+      <div class="card-label">Score Each Factor <span style="color:#555;margin-left:4px">( 0 – 10 )</span></div>
+      <div id="factors-list"></div>
+    </div>
+
+    <div class="total-bar">
+      <span class="total-label">Total Score</span>
+      <div>
+        <span class="total-val" id="total-display">0</span>
+        <span class="total-max" id="total-max">/100</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Notes <span style="color:#555">(optional)</span></div>
+      <textarea id="notes" placeholder="Any additional observations..."></textarea>
+    </div>
+
+    <button class="submit-btn" id="submit-btn" onclick="submitScore()">SUBMIT SCORE</button>
+  </div>
+
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── CONFIG ────────────────────────────────────────────────────────
+const SHEET_URL = "https://script.google.com/macros/s/AKfycbynxTbwFabFadw2jB_2abF9QS-gqtGtG_iBzB3N-_tEGyU_PpWOrBIHB2hwSedjplw/exec";
+const QUEUE_KEY = 'rockback_judge_queue';
+
+// ── CATEGORY DATA ─────────────────────────────────────────────────
+const GROUP_FACTORS = {
+  STATIC: [
+    "Rim and Tyre","Left Fenders","Rear L Door","Rear L Doorjam",
+    "Right Fenders","Rear R Door","Rear R Doorjam","Engine Bay","Height","Fitment"
+  ],
+  BAGGED: [
+    "Rim and Tyre","Left Fenders","Rear L Door","Rear L Doorjam",
+    "Right Fenders","Rear R Door","Rear R Doorjam","Engine Bay",
+    "Trunk Setup","Vehicle Condition","Height","Fitment","Functionality"
+  ],
+  OVERALL: [
+    "Rim and Tyre","Left Fenders","Front L Door","Rear L Door",
+    "Right Fenders","Front R Door","Rear R Door","Hood",
+    "Engine Bay","Trunk","Interior","Under Carriage","Glass and Lights"
+  ]
+};
+
+const CAT_GROUP = {
+  "Low with Standards 18\"": "STATIC",
+  "Low with Standards 20\"": "STATIC",
+  "Best Stance":             "STATIC",
+  "Low and Fresh 18\"":      "BAGGED",
+  "Low and Fresh 20\"":      "BAGGED",
+  "Low and Fresh 22\"":      "BAGGED",
+  "Best Fitment":            "BAGGED",
+  "Best Paint Job":          "OVERALL",
+  "Best Wrap":               "OVERALL",
+  "Best Nissan":             "OVERALL",
+  "Best Toyota":             "OVERALL",
+  "Best Honda":              "OVERALL",
+  "Best Mazda":              "OVERALL",
+  "Best Mitsubishi":         "OVERALL",
+  "Best Van":                "OVERALL",
+  "Best Panel Van":          "OVERALL",
+  "Best SUV":                "OVERALL",
+  "Old School":              "OVERALL",
+  "Engine Bay":              "OVERALL",
+  "Best Offroad":            "OVERALL"
+};
+
+// ── STATE ─────────────────────────────────────────────────────────
+let scores = {};
+let currentCar = null;
+let currentCategory = null;
+let debounceTimer = null;
+
+// ── STORE & FORWARD ───────────────────────────────────────────────
+function loadQueue() {
+  try { return JSON.parse(localStorage.getItem(QUEUE_KEY) || '[]'); } catch(e) { return []; }
+}
+function saveQueue(q) { localStorage.setItem(QUEUE_KEY, JSON.stringify(q)); }
+function enqueue(payload) {
+  const q = loadQueue(); q.push(payload); saveQueue(q); updatePendingBadge();
+}
+function dequeue(i) {
+  const q = loadQueue(); q.splice(i,1); saveQueue(q); updatePendingBadge();
+}
+function updatePendingBadge() {
+  const q = loadQueue();
+  const b = document.getElementById('pending-badge');
+  if (q.length) { b.textContent = q.length + ' pending'; b.classList.add('show'); }
+  else { b.classList.remove('show'); }
+}
+async function flushQueue() {
+  const q = loadQueue();
+  if (!q.length || !navigator.onLine) return;
+  for (let i = q.length - 1; i >= 0; i--) {
+    try {
+      await fetch(SHEET_URL, { method:'POST', mode:'no-cors', headers:{'Content-Type':'application/json'}, body:JSON.stringify(q[i]) });
+      dequeue(i);
+    } catch(e) { break; }
+  }
+  if (!loadQueue().length) showToast('✓ All pending scores sent!', 'success');
+}
+
+// ── ONLINE / OFFLINE ──────────────────────────────────────────────
+function setOnlineStatus(online) {
+  document.getElementById('status-dot').className = 'status-dot' + (online ? '' : ' offline');
+  document.getElementById('status-text').textContent = online ? 'Online' : 'Offline';
+  document.getElementById('offline-banner').className = 'offline-banner' + (online ? '' : ' show');
+  if (online) flushQueue();
+}
+window.addEventListener('online',  () => setOnlineStatus(true));
+window.addEventListener('offline', () => setOnlineStatus(false));
+setInterval(() => { if (navigator.onLine) flushQueue(); }, 15000);
+
+// ── CAR LOOKUP ────────────────────────────────────────────────────
+function onCarNumberInput(el) {
+  el.value = el.value.toUpperCase();
+  clearTimeout(debounceTimer);
+  debounceTimer = setTimeout(() => lookupCar(el.value.trim()), 400);
+}
+
+async function lookupCar(num) {
+  const infoCard = document.getElementById('car-info-card');
+  const notFound = document.getElementById('not-found');
+  const factorsSection = document.getElementById('factors-section');
+
+  infoCard.classList.remove('show');
+  notFound.classList.remove('show');
+  factorsSection.style.display = 'none';
+  currentCar = null;
+  currentCategory = null;
+
+  if (!num) return;
+
+  try {
+    const res = await fetch(SHEET_URL + '?action=getCar&car=' + encodeURIComponent(num), { cache: 'no-store' });
+    const data = await res.json();
+
+    if (!data || !data.found) {
+      notFound.classList.add('show');
+      return;
+    }
+
+    currentCar = data;
+    document.getElementById('car-info-name').textContent = data.name + '  —  #' + data.car_number;
+    document.getElementById('car-info-vehicle').textContent = [data.year, data.make, data.model].filter(Boolean).join(' ');
+
+    const chips = document.getElementById('cat-chips');
+    chips.innerHTML = data.categories.map(cat => `
+      <div class="cat-chip" onclick="selectCategory('${cat}')">${cat}</div>
+    `).join('');
+
+    infoCard.classList.add('show');
+  } catch(e) {
+    // If offline or sheet not set up, show not found
+    notFound.classList.add('show');
+  }
+}
+
+function selectCategory(cat) {
+  // Highlight chip
+  document.querySelectorAll('.cat-chip').forEach(c => {
+    c.classList.toggle('active', c.textContent === cat);
+  });
+
+  currentCategory = cat;
+  const group = CAT_GROUP[cat];
+  const factors = GROUP_FACTORS[group] || [];
+
+  scores = {};
+  factors.forEach(f => scores[f] = 0);
+
+  // Badge
+  const badgeWrap = document.getElementById('group-badge-wrap');
+  const badgeClass = group.toLowerCase();
+  badgeWrap.innerHTML = `<span class="group-badge ${badgeClass}">${group}</span>`;
+
+  // Max score
+  document.getElementById('total-max').textContent = '/' + (factors.length * 10);
+
+  // Factors
+  document.getElementById('factors-list').innerHTML = factors.map(f => `
+    <div class="factor-row">
+      <div class="factor-name">${f}</div>
+      <div class="score-control">
+        <button class="score-btn" onclick="adj('${f}',-1)">−</button>
+        <div class="score-val" id="sv-${slug(f)}">0</div>
+        <button class="score-btn" onclick="adj('${f}',1)">+</button>
+      </div>
+    </div>
+  `).join('');
+
+  document.getElementById('total-display').textContent = '0';
+  document.getElementById('factors-section').style.display = 'block';
+  document.getElementById('factors-section').scrollIntoView({ behavior:'smooth', block:'start' });
+}
+
+function slug(s) { return s.replace(/[^a-z0-9]/gi,'_').toLowerCase(); }
+
+function adj(factor, delta) {
+  scores[factor] = Math.max(0, Math.min(10, scores[factor] + delta));
+  document.getElementById('sv-' + slug(factor)).textContent = scores[factor];
+  document.getElementById('total-display').textContent = Object.values(scores).reduce((a,b) => a+b, 0);
+}
+
+// ── SUBMIT ────────────────────────────────────────────────────────
+async function submitScore() {
+  const judge = document.getElementById('judge-select').value;
+  const carNum = document.getElementById('car-number').value.trim().toUpperCase();
+  const notes  = document.getElementById('notes').value.trim();
+
+  if (!judge)           { showToast('Please select your name', 'error'); return; }
+  if (!carNum)          { showToast('Please enter a car number', 'error'); return; }
+  if (!currentCategory) { showToast('Please select a category to score', 'error'); return; }
+
+  const total = Object.values(scores).reduce((a,b) => a+b, 0);
+  const group = CAT_GROUP[currentCategory];
+  const btn = document.getElementById('submit-btn');
+  btn.disabled = true;
+  btn.textContent = 'SUBMITTING...';
+
+  const payload = {
+    timestamp: new Date().toISOString(),
+    judge,
+    car_number: carNum,
+    owner_name: currentCar ? currentCar.name : '',
+    category: currentCategory,
+    group,
+    scores: JSON.stringify(scores),
+    total,
+    max: (GROUP_FACTORS[group] || []).length * 10,
+    notes
+  };
+
+  if (!navigator.onLine) {
+    enqueue(payload);
+    showToast('Saved offline — will send when signal returns', 'warn');
+    resetAfterSubmit();
+    btn.disabled = false; btn.textContent = 'SUBMIT SCORE';
+    return;
+  }
+
+  try {
+    await fetch(SHEET_URL, { method:'POST', mode:'no-cors', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload) });
+    showToast(`✓ #${carNum} · ${currentCategory} · ${total} pts`, 'success');
+    resetAfterSubmit();
+  } catch(err) {
+    enqueue(payload);
+    showToast('Saved — will retry automatically', 'warn');
+    resetAfterSubmit();
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'SUBMIT SCORE';
+  }
+}
+
+function resetAfterSubmit() {
+  // Keep car loaded so judge can score another category for same car
+  document.getElementById('notes').value = '';
+  document.getElementById('factors-section').style.display = 'none';
+  document.querySelectorAll('.cat-chip').forEach(c => c.classList.remove('active'));
+  currentCategory = null;
+  scores = {};
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ── TOAST ─────────────────────────────────────────────────────────
+function showToast(msg, type='') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast ' + type;
+  void t.offsetWidth;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+// ── INIT ──────────────────────────────────────────────────────────
+setOnlineStatus(navigator.onLine);
+updatePendingBadge();
+</script>
+</body>
+</html>

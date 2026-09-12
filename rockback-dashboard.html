@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Rockback Car Show — Live Results</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --black: #0a0a0a;
+    --red: #e8132a;
+    --gold: #f5c518;
+    --silver: #adb5bd;
+    --bronze: #cd7f32;
+    --white: #f5f3ee;
+    --grey: #161616;
+    --grey2: #1e1e1e;
+    --grey3: #2a2a2a;
+    --text-muted: #666;
+    --radius: 12px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  header {
+    background: var(--grey);
+    border-bottom: 1px solid #222;
+    padding: 20px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .logo { display: flex; flex-direction: column; gap: 2px; }
+  .logo h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32px;
+    letter-spacing: 3px;
+    color: var(--red);
+    line-height: 1;
+  }
+  .logo span {
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+  .header-right { display: flex; align-items: center; gap: 20px; }
+  .live-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(232,19,42,0.1);
+    border: 1px solid rgba(232,19,42,0.3);
+    border-radius: 40px;
+    padding: 6px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--red);
+    letter-spacing: 1px;
+  }
+  .live-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--red);
+    animation: blink 1.4s infinite;
+  }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+  .refresh-btn {
+    background: var(--grey2);
+    border: 1px solid #333;
+    color: var(--white);
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .refresh-btn:hover { background: var(--grey3); }
+  .last-updated { font-size: 11px; color: var(--text-muted); }
+
+  /* STATS BAR */
+  .stats-bar {
+    display: flex;
+    gap: 12px;
+    padding: 20px 32px;
+    background: var(--grey);
+    border-bottom: 1px solid #222;
+    flex-wrap: wrap;
+  }
+  .stat-pill {
+    background: var(--grey2);
+    border: 1px solid #2a2a2a;
+    border-radius: 8px;
+    padding: 10px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .stat-val {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    color: var(--white);
+    letter-spacing: 1px;
+    line-height: 1;
+  }
+  .stat-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-muted); font-weight: 600; }
+
+  /* MAIN LAYOUT */
+  .container { padding: 28px 32px; max-width: 1400px; margin: 0 auto; }
+
+  /* SECTION TITLE */
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    letter-spacing: 2px;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+    margin-top: 32px;
+    text-transform: uppercase;
+  }
+  .section-title:first-child { margin-top: 0; }
+
+  /* CATEGORY CARDS */
+  .categories-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 16px;
+  }
+  .cat-card {
+    background: var(--grey);
+    border: 1px solid #222;
+    border-radius: var(--radius);
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .cat-card:hover { border-color: #333; }
+  .cat-header {
+    padding: 14px 18px;
+    background: var(--grey2);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #222;
+  }
+  .cat-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    letter-spacing: 1.5px;
+    color: var(--white);
+  }
+  .cat-count {
+    font-size: 11px;
+    color: var(--text-muted);
+    background: var(--grey3);
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-weight: 500;
+  }
+  .cat-body { padding: 12px 0; }
+  .car-row {
+    display: flex;
+    align-items: center;
+    padding: 8px 18px;
+    gap: 12px;
+    transition: background 0.15s;
+  }
+  .car-row:hover { background: rgba(255,255,255,0.03); }
+  .rank {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    width: 28px;
+    text-align: center;
+    flex-shrink: 0;
+  }
+  .rank.gold { color: var(--gold); }
+  .rank.silver { color: var(--silver); }
+  .rank.bronze { color: var(--bronze); }
+  .rank.other { color: var(--text-muted); }
+  .car-num {
+    background: var(--grey3);
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 16px;
+    letter-spacing: 1px;
+    color: var(--white);
+    flex-shrink: 0;
+    min-width: 48px;
+    text-align: center;
+  }
+  .car-judge { font-size: 12px; color: var(--text-muted); flex: 1; }
+  .car-score-bar { flex: 1; display: flex; align-items: center; gap: 8px; }
+  .bar-bg {
+    flex: 1;
+    height: 4px;
+    background: var(--grey3);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .bar-fill {
+    height: 100%;
+    border-radius: 2px;
+    background: var(--red);
+    transition: width 0.6s ease;
+  }
+  .bar-fill.gold-bar { background: var(--gold); }
+  .car-score-val {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    color: var(--white);
+    letter-spacing: 1px;
+    flex-shrink: 0;
+    width: 42px;
+    text-align: right;
+  }
+  .empty-cat {
+    padding: 20px 18px;
+    font-size: 13px;
+    color: var(--text-muted);
+    font-style: italic;
+  }
+
+  /* WINNER BANNER */
+  .winner-card {
+    background: linear-gradient(135deg, #1a1200 0%, #1c1c00 100%);
+    border: 1px solid rgba(245,197,24,0.25);
+    border-radius: var(--radius);
+    padding: 18px 22px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 12px;
+  }
+  .winner-trophy {
+    font-size: 32px;
+    flex-shrink: 0;
+  }
+  .winner-info { flex: 1; }
+  .winner-category { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--gold); opacity: 0.7; font-weight: 600; }
+  .winner-car {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    letter-spacing: 2px;
+    color: var(--gold);
+    line-height: 1;
+  }
+  .winner-score { font-size: 13px; color: rgba(245,197,24,0.6); margin-top: 2px; }
+  .winners-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+
+  /* RAW TABLE */
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th {
+    text-align: left;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    font-weight: 600;
+    padding: 10px 14px;
+    border-bottom: 1px solid #222;
+    white-space: nowrap;
+  }
+  td {
+    padding: 10px 14px;
+    border-bottom: 1px solid #1a1a1a;
+    color: var(--white);
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+  .pill {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    background: rgba(232,19,42,0.15);
+    color: var(--red);
+  }
+
+  /* TABS */
+  .tabs { display: flex; gap: 4px; margin-bottom: 24px; }
+  .tab {
+    padding: 9px 18px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 1px solid transparent;
+    color: var(--text-muted);
+    background: none;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .tab.active { background: var(--grey2); border-color: #333; color: var(--white); }
+  .tab:hover:not(.active) { color: var(--white); }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* LOADING */
+  .loading {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-muted);
+    font-size: 14px;
+  }
+  .spinner {
+    width: 28px; height: 28px;
+    border: 2px solid #2a2a2a;
+    border-top-color: var(--red);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto 14px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  @media (max-width: 768px) {
+    header { padding: 14px 16px; }
+    .stats-bar { padding: 14px 16px; }
+    .container { padding: 20px 16px; }
+    .logo h1 { font-size: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <h1>Rockback</h1>
+    <span>Car Show · Live Results</span>
+  </div>
+  <div class="header-right">
+    <div class="last-updated" id="last-updated">—</div>
+    <div class="live-badge"><span class="live-dot"></span> LIVE</div>
+    <button class="refresh-btn" onclick="fetchData()">↻ Refresh</button>
+  </div>
+</header>
+
+<div class="stats-bar">
+  <div class="stat-pill">
+    <div class="stat-val" id="stat-submissions">—</div>
+    <div class="stat-label">Submissions</div>
+  </div>
+  <div class="stat-pill">
+    <div class="stat-val" id="stat-cars">—</div>
+    <div class="stat-label">Cars Scored</div>
+  </div>
+  <div class="stat-pill">
+    <div class="stat-val" id="stat-categories">—</div>
+    <div class="stat-label">Categories Active</div>
+  </div>
+  <div class="stat-pill">
+    <div class="stat-val" id="stat-high">—</div>
+    <div class="stat-label">Highest Score</div>
+  </div>
+</div>
+
+<div class="container">
+
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('leaderboard')">Leaderboard</button>
+    <button class="tab" onclick="switchTab('winners')">Winners</button>
+    <button class="tab" onclick="switchTab('raw')">All Submissions</button>
+  </div>
+
+  <!-- LEADERBOARD TAB -->
+  <div class="tab-content active" id="tab-leaderboard">
+    <div id="leaderboard-content">
+      <div class="loading"><div class="spinner"></div>Loading scores...</div>
+    </div>
+  </div>
+
+  <!-- WINNERS TAB -->
+  <div class="tab-content" id="tab-winners">
+    <div id="winners-content">
+      <div class="loading"><div class="spinner"></div>Loading...</div>
+    </div>
+  </div>
+
+  <!-- RAW TAB -->
+  <div class="tab-content" id="tab-raw">
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Time</th>
+            <th>Judge</th>
+            <th>Car</th>
+            <th>Category</th>
+            <th>Score</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody id="raw-table-body">
+          <tr><td colspan="7" style="text-align:center;color:var(--text-muted);padding:40px">Loading...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ─── CONFIGURATION ───────────────────────────────────────────────
+// Replace with your Google Apps Script Web App URL (same one as the form)
+const SHEET_URL = "https://script.google.com/macros/s/AKfycbynxTbwFabFadw2jB_2abF9QS-gqtGtG_iBzB3N-_tEGyU_PpWOrBIHB2hwSedjplw/exec";
+
+// Auto-refresh every 30 seconds
+const REFRESH_INTERVAL = 30000;
+
+// ─── STATE ───────────────────────────────────────────────────────
+let allData = [];
+
+// ─── TABS ────────────────────────────────────────────────────────
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// ─── FETCH ───────────────────────────────────────────────────────
+async function fetchData() {
+  try {
+    const res = await fetch(SHEET_URL + '?action=get', { cache: 'no-store' });
+    const data = await res.json();
+    allData = data.rows || [];
+    renderAll();
+    document.getElementById('last-updated').textContent =
+      'Updated ' + new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+  } catch (e) {
+    console.error('Fetch error:', e);
+    document.getElementById('last-updated').textContent = 'Error fetching data';
+  }
+}
+
+// ─── RENDER ALL ──────────────────────────────────────────────────
+function renderAll() {
+  updateStats();
+  renderLeaderboard();
+  renderWinners();
+  renderRaw();
+}
+
+// ─── STATS ───────────────────────────────────────────────────────
+function updateStats() {
+  const cars = new Set(allData.map(r => r.car_number)).size;
+  const cats = new Set(allData.map(r => r.category)).size;
+  const high = allData.length ? Math.max(...allData.map(r => +r.total)) : 0;
+  document.getElementById('stat-submissions').textContent = allData.length;
+  document.getElementById('stat-cars').textContent = cars;
+  document.getElementById('stat-categories').textContent = cats;
+  document.getElementById('stat-high').textContent = high > 0 ? high : '—';
+}
+
+// ─── LEADERBOARD ─────────────────────────────────────────────────
+function renderLeaderboard() {
+  const el = document.getElementById('leaderboard-content');
+  if (!allData.length) {
+    el.innerHTML = '<div class="loading" style="padding:40px">No scores yet — waiting for judges...</div>';
+    return;
+  }
+
+  // Group by category, then by car, pick highest score per car
+  const byCategory = {};
+  allData.forEach(row => {
+    if (!byCategory[row.category]) byCategory[row.category] = {};
+    const car = row.car_number;
+    const score = +row.total;
+    if (!byCategory[row.category][car] || score > byCategory[row.category][car].score) {
+      byCategory[row.category][car] = { score, judge: row.judge, notes: row.notes };
+    }
+  });
+
+  const rankLabels = ['gold','silver','bronze'];
+  const rankIcons = ['1','2','3'];
+
+  let html = '<div class="categories-grid">';
+  Object.entries(byCategory).sort((a,b) => a[0].localeCompare(b[0])).forEach(([cat, cars]) => {
+    const sorted = Object.entries(cars).sort((a,b) => b[1].score - a[1].score);
+    html += `
+      <div class="cat-card">
+        <div class="cat-header">
+          <div class="cat-name">${cat}</div>
+          <div class="cat-count">${sorted.length} car${sorted.length !== 1 ? 's' : ''}</div>
+        </div>
+        <div class="cat-body">
+          ${sorted.length === 0 ? '<div class="empty-cat">No entries yet</div>' :
+            sorted.map(([carNum, info], i) => {
+              const rankClass = i < 3 ? rankLabels[i] : 'other';
+              const rankIcon = i < 3 ? rankIcons[i] : (i+1);
+              const pct = (info.score / 100) * 100;
+              return `
+                <div class="car-row">
+                  <div class="rank ${rankClass}">${rankIcon}</div>
+                  <div class="car-num">#${carNum}</div>
+                  <div class="car-score-bar">
+                    <div class="bar-bg"><div class="bar-fill ${i===0?'gold-bar':''}" style="width:${pct}%"></div></div>
+                    <div class="car-score-val">${info.score}</div>
+                  </div>
+                </div>
+              `;
+            }).join('')
+          }
+        </div>
+      </div>
+    `;
+  });
+  html += '</div>';
+  el.innerHTML = html;
+}
+
+// ─── WINNERS ─────────────────────────────────────────────────────
+function renderWinners() {
+  const el = document.getElementById('winners-content');
+  if (!allData.length) {
+    el.innerHTML = '<div class="loading" style="padding:40px">No scores yet</div>';
+    return;
+  }
+
+  const byCategory = {};
+  allData.forEach(row => {
+    if (!byCategory[row.category]) byCategory[row.category] = {};
+    const car = row.car_number;
+    const score = +row.total;
+    if (!byCategory[row.category][car] || score > byCategory[row.category][car]) {
+      byCategory[row.category][car] = score;
+    }
+  });
+
+  let html = '<div class="winners-grid">';
+  Object.entries(byCategory).sort((a,b) => a[0].localeCompare(b[0])).forEach(([cat, cars]) => {
+    const sorted = Object.entries(cars).sort((a,b) => b[1]-a[1]);
+    if (!sorted.length) return;
+    const [winnerCar, winnerScore] = sorted[0];
+    html += `
+      <div class="winner-card">
+        <div class="winner-trophy">🏆</div>
+        <div class="winner-info">
+          <div class="winner-category">${cat}</div>
+          <div class="winner-car">Car #${winnerCar}</div>
+          <div class="winner-score">${winnerScore} / 100 points</div>
+        </div>
+      </div>
+    `;
+  });
+  html += '</div>';
+  el.innerHTML = html;
+}
+
+// ─── RAW TABLE ───────────────────────────────────────────────────
+function renderRaw() {
+  const tbody = document.getElementById('raw-table-body');
+  if (!allData.length) {
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--text-muted);padding:40px">No submissions yet</td></tr>';
+    return;
+  }
+  const sorted = [...allData].sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
+  tbody.innerHTML = sorted.map((row, i) => {
+    const time = new Date(row.timestamp).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+    return `
+      <tr>
+        <td style="color:var(--text-muted)">${sorted.length - i}</td>
+        <td style="color:var(--text-muted);font-size:12px">${time}</td>
+        <td>${row.judge}</td>
+        <td><strong>#${row.car_number}</strong></td>
+        <td><span class="pill">${row.category}</span></td>
+        <td><strong>${row.total}</strong><span style="color:var(--text-muted);font-size:11px">/100</span></td>
+        <td style="color:var(--text-muted);font-size:12px;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${row.notes || '—'}</td>
+      </tr>
+    `;
+  }).join('');
+}
+
+// ─── INIT ────────────────────────────────────────────────────────
+fetchData();
+setInterval(fetchData, REFRESH_INTERVAL);
+</script>
+</body>
+</html>
