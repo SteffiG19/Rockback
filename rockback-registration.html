@@ -47,6 +47,7 @@
   }
   input:focus { border-color: var(--green); box-shadow: 0 0 0 2px rgba(57,255,20,0.1); }
   .optional-tag { font-size: 10px; color: var(--text-muted); margin-left: 6px; font-weight: 400; letter-spacing: 0; text-transform: none; }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 
   /* CATEGORIES */
   .cat-group-title { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; padding: 6px 0; margin-bottom: 8px; border-bottom: 1px solid #222; }
@@ -136,6 +137,14 @@
     <input type="text" id="owner-name" placeholder="Full name" autocomplete="off"/>
   </div>
   <div class="card">
+    <div class="card-label">Vehicle Details</div>
+    <div class="row2" style="margin-bottom:10px">
+      <input type="text" id="vehicle-make" placeholder="Make (e.g. Honda)" autocomplete="off"/>
+      <input type="text" id="vehicle-model" placeholder="Model (e.g. Civic)" autocomplete="off"/>
+    </div>
+    <input type="text" id="vehicle-year" placeholder="Year (e.g. 2020)" maxlength="4" inputmode="numeric" autocomplete="off"/>
+  </div>
+  <div class="card">
     <div class="card-label">Parking Spot <span class="optional-tag">(optional)</span></div>
     <input type="text" id="parking-spot" placeholder="e.g. B4"
       maxlength="10" autocomplete="off" autocorrect="off"
@@ -209,6 +218,9 @@ function getSelectedCats() {
 async function submitReg() {
   const carNum  = document.getElementById('car-number').value.trim().toUpperCase();
   const name    = document.getElementById('owner-name').value.trim();
+  const make    = document.getElementById('vehicle-make').value.trim();
+  const model   = document.getElementById('vehicle-model').value.trim();
+  const year    = document.getElementById('vehicle-year').value.trim();
   const parking = document.getElementById('parking-spot').value.trim().toUpperCase();
   const cats    = getSelectedCats();
   if (!carNum) { showToast('Car number required', 'error'); return; }
@@ -218,7 +230,7 @@ async function submitReg() {
   btn.disabled = true; btn.textContent = 'REGISTERING...';
   const payload = {
     type: 'registration', timestamp: new Date().toISOString(),
-    car_number: carNum, name, parking_spot: parking,
+    car_number: carNum, name, make, model, year, parking_spot: parking,
     categories: cats, fee: cats.length * FEE_PER_CAT
   };
   saveLocalReg(payload);
@@ -264,7 +276,7 @@ function renderRecentList() {
     </div>`).join('');
 }
 function resetForm() {
-  ['car-number','owner-name','parking-spot'].forEach(id => document.getElementById(id).value = '');
+  ['car-number','owner-name','vehicle-make','vehicle-model','vehicle-year','parking-spot'].forEach(id => document.getElementById(id).value = '');
   document.querySelectorAll('.cat-check-label').forEach(l => { l.classList.remove('checked'); l.querySelector('input').checked = false; });
   onCatChange();
   document.getElementById('car-number').focus();
