@@ -478,7 +478,7 @@ async function lookupCar(num) {
 
     infoCard.classList.add('show');
   } catch(e) {
-    notFound.classList.add('show');
+    if (!currentCar) notFound.classList.add('show');
   }
 }
 
