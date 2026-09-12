@@ -7,140 +7,112 @@
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
 <style>
   :root {
-    --black: #0a0a0a;
-    --red: #e8132a;
-    --red-dark: #b50e20;
-    --white: #f5f3ee;
-    --grey: #1c1c1c;
-    --grey2: #2e2e2e;
-    --grey3: #3a3a3a;
-    --text-muted: #888;
-    --amber: #f59e0b;
-    --green: #22c55e;
+    --black: #080808;
+    --green: #39ff14;
+    --green-dim: rgba(57,255,20,0.15);
+    --green-border: rgba(57,255,20,0.3);
+    --white: #f0f0f0;
+    --grey: #111111;
+    --grey2: #1a1a1a;
+    --grey3: #252525;
+    --text-muted: #666;
     --radius: 10px;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { background: var(--black); color: var(--white); font-family: 'DM Sans', sans-serif; min-height: 100vh; padding-bottom: 60px; }
 
   header {
-    background: #111;
-    border-bottom: 2px solid var(--red);
+    background: var(--grey);
+    border-bottom: 2px solid var(--green);
     padding: 16px 20px 12px;
     display: flex; align-items: center; justify-content: space-between;
     position: sticky; top: 0; z-index: 100;
+    box-shadow: 0 0 20px rgba(57,255,20,0.15);
   }
-  header h1 { font-family: 'Bebas Neue', sans-serif; font-size: 26px; letter-spacing: 2px; color: var(--white); line-height: 1; }
-  header .sub { font-size: 10px; color: var(--red); font-weight: 600; letter-spacing: 2px; text-transform: uppercase; }
-  .reg-count { font-family: 'Bebas Neue', sans-serif; font-size: 28px; color: var(--red); letter-spacing: 1px; text-align: right; line-height: 1; }
+  header h1 { font-family: 'Bebas Neue', sans-serif; font-size: 26px; letter-spacing: 3px; color: var(--green); line-height: 1; text-shadow: 0 0 20px rgba(57,255,20,0.5); }
+  header .sub { font-size: 10px; color: var(--text-muted); font-weight: 600; letter-spacing: 2px; text-transform: uppercase; }
+  .reg-count { font-family: 'Bebas Neue', sans-serif; font-size: 28px; color: var(--green); letter-spacing: 1px; text-align: right; line-height: 1; }
   .reg-count-label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
 
   main { padding: 18px 16px; max-width: 520px; margin: 0 auto; }
 
-  .card { background: var(--grey); border-radius: var(--radius); padding: 16px; margin-bottom: 12px; border: 1px solid #2a2a2a; }
-  .card-label { font-size: 10px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--red); margin-bottom: 10px; }
+  .card { background: var(--grey); border-radius: var(--radius); padding: 16px; margin-bottom: 12px; border: 1px solid #222; }
+  .card-label { font-size: 10px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--green); margin-bottom: 10px; opacity: 0.8; }
 
-  input[type="text"], input[type="number"], select {
-    width: 100%; background: var(--grey2); border: 1px solid #3a3a3a;
+  input[type="text"] {
+    width: 100%; background: var(--grey2); border: 1px solid #2a2a2a;
     border-radius: 8px; color: var(--white); font-family: 'DM Sans', sans-serif;
-    font-size: 16px; padding: 13px 14px; appearance: none; -webkit-appearance: none;
-    outline: none; transition: border-color 0.2s;
+    font-size: 16px; padding: 13px 14px; outline: none; transition: border-color 0.2s;
+    -webkit-appearance: none;
   }
-  input:focus, select:focus { border-color: var(--red); }
-  .select-wrap { position: relative; }
-  .select-wrap::after { content: '▾'; position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: var(--text-muted); pointer-events: none; }
-  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  input:focus { border-color: var(--green); box-shadow: 0 0 0 2px rgba(57,255,20,0.1); }
+  .optional-tag { font-size: 10px; color: var(--text-muted); margin-left: 6px; font-weight: 400; letter-spacing: 0; text-transform: none; }
 
   /* CATEGORIES */
-  .cat-section { margin-bottom: 14px; }
-  .cat-group-title {
-    font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
-    padding: 6px 0; margin-bottom: 8px; border-bottom: 1px solid #2a2a2a;
-  }
+  .cat-group-title { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; padding: 6px 0; margin-bottom: 8px; border-bottom: 1px solid #222; }
   .cat-group-title.static { color: #818cf8; }
-  .cat-group-title.bagged { color: var(--amber); }
+  .cat-group-title.bagged { color: #f59e0b; }
   .cat-group-title.overall { color: var(--green); }
   .cat-checkboxes { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
   .cat-check-label {
     display: flex; align-items: center; gap: 7px;
-    background: var(--grey2); border: 1px solid #3a3a3a;
+    background: var(--grey2); border: 1px solid #2a2a2a;
     border-radius: 8px; padding: 8px 12px;
     font-size: 13px; font-weight: 500; cursor: pointer;
     transition: all 0.15s; user-select: none;
   }
   .cat-check-label input[type="checkbox"] { display: none; }
-  .cat-check-label.checked { background: rgba(232,19,42,0.15); border-color: rgba(232,19,42,0.4); color: var(--white); }
-  .check-box {
-    width: 16px; height: 16px; border-radius: 4px; border: 2px solid #555;
-    display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.15s;
-  }
-  .cat-check-label.checked .check-box { background: var(--red); border-color: var(--red); }
-  .check-tick { display: none; color: #fff; font-size: 11px; font-weight: 700; }
+  .cat-check-label.checked { background: var(--green-dim); border-color: var(--green-border); color: var(--green); }
+  .check-box { width: 16px; height: 16px; border-radius: 4px; border: 2px solid #444; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.15s; }
+  .cat-check-label.checked .check-box { background: var(--green); border-color: var(--green); }
+  .check-tick { display: none; color: #000; font-size: 11px; font-weight: 900; }
   .cat-check-label.checked .check-tick { display: block; }
 
   /* FEE */
   .fee-display {
-    background: #0a1a0a;
-    border: 1px solid rgba(34,197,94,0.2);
-    border-radius: var(--radius);
-    padding: 14px 18px;
-    margin-bottom: 12px;
+    background: var(--green-dim); border: 1px solid var(--green-border);
+    border-radius: var(--radius); padding: 14px 18px; margin-bottom: 12px;
     display: flex; align-items: center; justify-content: space-between;
   }
   .fee-label { font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); }
-  .fee-val { font-family: 'Bebas Neue', sans-serif; font-size: 32px; color: var(--green); letter-spacing: 2px; line-height: 1; }
-  .fee-cats { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+  .fee-val { font-family: 'Bebas Neue', sans-serif; font-size: 32px; color: var(--green); letter-spacing: 2px; line-height: 1; text-shadow: 0 0 10px rgba(57,255,20,0.4); }
+  .fee-cats { font-size: 12px; color: rgba(57,255,20,0.6); margin-top: 2px; }
 
   /* SUBMIT */
   .submit-btn {
-    width: 100%; background: var(--red); color: #fff; border: none;
+    width: 100%; background: var(--green); color: #000; border: none;
     border-radius: var(--radius); font-family: 'Bebas Neue', sans-serif;
     font-size: 22px; letter-spacing: 3px; padding: 18px;
-    cursor: pointer; transition: background 0.2s, transform 0.1s; margin-top: 4px;
+    cursor: pointer; transition: all 0.2s; margin-top: 4px;
+    box-shadow: 0 0 20px rgba(57,255,20,0.3);
   }
-  .submit-btn:active { background: var(--red-dark); transform: scale(0.98); }
-  .submit-btn:disabled { background: #444; cursor: not-allowed; }
+  .submit-btn:active { transform: scale(0.98); box-shadow: none; }
+  .submit-btn:disabled { background: #333; color: #666; cursor: not-allowed; box-shadow: none; }
 
-  /* RECENT LIST */
-  .recent-title {
-    font-family: 'Bebas Neue', sans-serif; font-size: 18px; letter-spacing: 2px;
-    color: var(--text-muted); margin: 24px 0 12px;
-  }
-  .recent-item {
-    background: var(--grey); border: 1px solid #222; border-radius: var(--radius);
-    padding: 12px 16px; margin-bottom: 8px;
-    display: flex; align-items: flex-start; justify-content: space-between; gap: 10px;
-  }
-  .recent-car { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 1px; color: var(--red); }
+  /* RECENT */
+  .recent-title { font-family: 'Bebas Neue', sans-serif; font-size: 18px; letter-spacing: 2px; color: var(--text-muted); margin: 24px 0 12px; }
+  .recent-item { background: var(--grey); border: 1px solid #1a1a1a; border-radius: var(--radius); padding: 12px 16px; margin-bottom: 8px; display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+  .recent-car { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 1px; color: var(--green); }
   .recent-name { font-size: 14px; font-weight: 600; }
-  .recent-vehicle { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+  .recent-spot { font-size: 12px; color: var(--text-muted); margin-top: 1px; }
   .recent-cats { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
-  .recent-cat-tag {
-    font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 20px;
-    background: rgba(232,19,42,0.15); color: var(--red); border: 1px solid rgba(232,19,42,0.2);
-  }
-  .delete-btn {
-    background: none; border: none; color: #444; font-size: 18px; cursor: pointer;
-    padding: 0 4px; flex-shrink: 0; transition: color 0.15s;
-  }
-  .delete-btn:hover { color: var(--red); }
+  .recent-cat-tag { font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 20px; background: var(--green-dim); color: var(--green); border: 1px solid var(--green-border); }
+  .delete-btn { background: none; border: none; color: #333; font-size: 18px; cursor: pointer; padding: 0 4px; flex-shrink: 0; transition: color 0.15s; }
+  .delete-btn:hover { color: #ff4444; }
   .empty-recent { font-size: 13px; color: var(--text-muted); font-style: italic; padding: 10px 0; }
 
-  /* TOAST */
   .toast {
-    position: fixed; bottom: 24px; left: 50%;
-    transform: translateX(-50%) translateY(80px);
-    background: #1a1a1a; border: 1px solid #333; color: var(--white);
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px);
+    background: #111; border: 1px solid var(--green); color: var(--green);
     padding: 12px 22px; border-radius: 40px; font-size: 14px; font-weight: 500;
     z-index: 999; transition: transform 0.35s cubic-bezier(.34,1.56,.64,1);
-    white-space: nowrap; box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+    white-space: nowrap; box-shadow: 0 0 20px rgba(57,255,20,0.2);
   }
   .toast.show { transform: translateX(-50%) translateY(0); }
-  .toast.success { border-color: var(--green); color: var(--green); }
-  .toast.error { border-color: var(--red); color: #ff6b6b; }
+  .toast.error { border-color: #ff4444; color: #ff4444; }
 </style>
 </head>
 <body>
-
 <header>
   <div>
     <h1>Rockback</h1>
@@ -151,52 +123,40 @@
     <div class="reg-count-label">Registered</div>
   </div>
 </header>
-
 <main>
-
-  <!-- CAR NUMBER -->
   <div class="card">
-    <div class="card-label">Parking Spot / Car Number</div>
+    <div class="card-label">Car Number</div>
     <input type="text" id="car-number" placeholder="e.g. A12 or 042"
       maxlength="10" autocomplete="off" autocorrect="off"
       autocapitalize="characters" spellcheck="false"
       oninput="this.value=this.value.toUpperCase()"/>
   </div>
-
-  <!-- PARTICIPANT INFO -->
   <div class="card">
-    <div class="card-label">Participant Details</div>
-    <input type="text" id="owner-name" placeholder="Full name" style="margin-bottom:10px"
-      autocomplete="off"/>
-    <div class="row2">
-      <input type="text" id="vehicle-make" placeholder="Make (e.g. Honda)" autocomplete="off"/>
-      <input type="text" id="vehicle-model" placeholder="Model (e.g. Civic)" autocomplete="off"/>
-    </div>
-    <input type="text" id="vehicle-year" placeholder="Year" style="margin-top:10px"
-      maxlength="4" inputmode="numeric" autocomplete="off"/>
+    <div class="card-label">Participant Name</div>
+    <input type="text" id="owner-name" placeholder="Full name" autocomplete="off"/>
   </div>
-
-  <!-- CATEGORIES -->
+  <div class="card">
+    <div class="card-label">Parking Spot <span class="optional-tag">(optional)</span></div>
+    <input type="text" id="parking-spot" placeholder="e.g. B4"
+      maxlength="10" autocomplete="off" autocorrect="off"
+      autocapitalize="characters" spellcheck="false"
+      oninput="this.value=this.value.toUpperCase()"/>
+  </div>
   <div class="card">
     <div class="card-label">Categories Selected</div>
-
     <div class="cat-section">
       <div class="cat-group-title static">Static</div>
       <div class="cat-checkboxes" id="cats-static"></div>
     </div>
-
     <div class="cat-section">
       <div class="cat-group-title bagged">Bagged</div>
       <div class="cat-checkboxes" id="cats-bagged"></div>
     </div>
-
     <div class="cat-section">
       <div class="cat-group-title overall">Overall</div>
       <div class="cat-checkboxes" id="cats-overall"></div>
     </div>
   </div>
-
-  <!-- FEE SUMMARY -->
   <div class="fee-display">
     <div>
       <div class="fee-label">Entry Fee</div>
@@ -206,24 +166,15 @@
       <div class="fee-val" id="fee-val">$0</div>
     </div>
   </div>
-
   <button class="submit-btn" id="submit-btn" onclick="submitReg()">REGISTER PARTICIPANT</button>
-
-  <!-- RECENT -->
   <div class="recent-title">Today's Registrations</div>
   <div id="recent-list"></div>
-
 </main>
-
 <div class="toast" id="toast"></div>
-
 <script>
-// ── CONFIG ────────────────────────────────────────────────────────
 const SHEET_URL = "https://script.google.com/macros/s/AKfycbynxTbwFabFadw2jB_2abF9QS-gqtGtG_iBzB3N-_tEGyU_PpWOrBIHB2hwSedjplw/exec";
-const FEE_PER_CAT = 50; // Set your fee per category here (TTD or whatever currency)
+const FEE_PER_CAT = 50;
 const LOCAL_KEY = 'rockback_registrations';
-
-// ── CATEGORIES ────────────────────────────────────────────────────
 const CATS = {
   static:  ['Low with Standards 18','Low with Standards 20','Best Stance'],
   bagged:  ['Low and Fresh 18','Low and Fresh 20','Low and Fresh 22','Best Fitment'],
@@ -231,150 +182,99 @@ const CATS = {
             'Best Mazda','Best Mitsubishi','Best Van','Best Panel Van','Best SUV',
             'Old School','Engine Bay','Best Offroad']
 };
-
-// ── BUILD CHECKBOXES ──────────────────────────────────────────────
 ['static','bagged','overall'].forEach(group => {
   const wrap = document.getElementById('cats-' + group);
   CATS[group].forEach(cat => {
     const label = document.createElement('label');
     label.className = 'cat-check-label';
-    label.innerHTML = `
-      <input type="checkbox" value="${cat}" onchange="onCatChange()"/>
-      <span class="check-box"><span class="check-tick">✓</span></span>
-      ${cat}
-    `;
+    label.innerHTML = `<input type="checkbox" value="${cat}"/><span class="check-box"><span class="check-tick">✓</span></span>${cat}`;
     label.querySelector('input').addEventListener('change', function() {
       label.classList.toggle('checked', this.checked);
+      onCatChange();
     });
     wrap.appendChild(label);
   });
 });
-
-// ── CATEGORY CHANGE ───────────────────────────────────────────────
 function onCatChange() {
   const selected = getSelectedCats();
-  const count = selected.length;
-  const fee = count * FEE_PER_CAT;
+  const fee = selected.length * FEE_PER_CAT;
   document.getElementById('fee-val').textContent = '$' + fee;
-  document.getElementById('fee-cats').textContent = count
-    ? count + ' categor' + (count === 1 ? 'y' : 'ies') + ' selected'
+  document.getElementById('fee-cats').textContent = selected.length
+    ? selected.length + ' categor' + (selected.length === 1 ? 'y' : 'ies') + ' selected'
     : 'No categories selected';
 }
-
 function getSelectedCats() {
   return [...document.querySelectorAll('.cat-check-label input:checked')].map(i => i.value);
 }
-
-// ── SUBMIT ────────────────────────────────────────────────────────
 async function submitReg() {
   const carNum  = document.getElementById('car-number').value.trim().toUpperCase();
   const name    = document.getElementById('owner-name').value.trim();
-  const make    = document.getElementById('vehicle-make').value.trim();
-  const model   = document.getElementById('vehicle-model').value.trim();
-  const year    = document.getElementById('vehicle-year').value.trim();
+  const parking = document.getElementById('parking-spot').value.trim().toUpperCase();
   const cats    = getSelectedCats();
-
-  if (!carNum)       { showToast('Car number required', 'error'); return; }
-  if (!name)         { showToast('Participant name required', 'error'); return; }
-  if (!cats.length)  { showToast('Select at least one category', 'error'); return; }
-
+  if (!carNum) { showToast('Car number required', 'error'); return; }
+  if (!name)   { showToast('Participant name required', 'error'); return; }
+  if (!cats.length) { showToast('Select at least one category', 'error'); return; }
   const btn = document.getElementById('submit-btn');
   btn.disabled = true; btn.textContent = 'REGISTERING...';
-
   const payload = {
-    type: 'registration',
-    timestamp: new Date().toISOString(),
-    car_number: carNum,
-    name, make, model, year,
-    categories: cats,
-    fee: cats.length * FEE_PER_CAT
+    type: 'registration', timestamp: new Date().toISOString(),
+    car_number: carNum, name, parking_spot: parking,
+    categories: cats, fee: cats.length * FEE_PER_CAT
   };
-
-  // Save locally first so it shows in the list immediately
   saveLocalReg(payload);
   renderRecentList();
-
   try {
-    await fetch(SHEET_URL, {
-      method: 'POST', mode: 'no-cors',
-      headers: {'Content-Type':'application/json'},
-      body: JSON.stringify(payload)
-    });
-    showToast(`✓ #${carNum} — ${name} registered`, 'success');
+    await fetch(SHEET_URL, { method:'POST', mode:'no-cors', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload) });
+    showToast('✓ #' + carNum + ' — ' + name + ' registered');
   } catch(e) {
-    showToast(`Saved locally — will sync when online`, 'success');
+    showToast('Saved locally — will sync when online');
   }
-
   resetForm();
   btn.disabled = false; btn.textContent = 'REGISTER PARTICIPANT';
 }
-
-// ── LOCAL STORAGE ─────────────────────────────────────────────────
-function saveLocalReg(payload) {
-  const regs = loadLocalRegs();
-  regs.unshift(payload);
+function saveLocalReg(p) {
+  const regs = loadLocalRegs(); regs.unshift(p);
   localStorage.setItem(LOCAL_KEY, JSON.stringify(regs));
   document.getElementById('reg-count').textContent = regs.length;
 }
-
 function loadLocalRegs() {
   try { return JSON.parse(localStorage.getItem(LOCAL_KEY) || '[]'); } catch(e) { return []; }
 }
-
-function deleteLocalReg(carNum, timestamp) {
-  const regs = loadLocalRegs().filter(r => !(r.car_number === carNum && r.timestamp === timestamp));
+function deleteLocalReg(carNum, ts) {
+  const regs = loadLocalRegs().filter(r => !(r.car_number === carNum && r.timestamp === ts));
   localStorage.setItem(LOCAL_KEY, JSON.stringify(regs));
   document.getElementById('reg-count').textContent = regs.length;
   renderRecentList();
 }
-
-// ── RECENT LIST ───────────────────────────────────────────────────
 function renderRecentList() {
   const regs = loadLocalRegs();
   const el = document.getElementById('recent-list');
-  if (!regs.length) {
-    el.innerHTML = '<div class="empty-recent">No registrations yet today</div>';
-    return;
-  }
+  if (!regs.length) { el.innerHTML = '<div class="empty-recent">No registrations yet today</div>'; return; }
   el.innerHTML = regs.map(r => `
     <div class="recent-item">
       <div style="flex:1">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:3px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:2px">
           <div class="recent-car">#${r.car_number}</div>
           <div class="recent-name">${r.name}</div>
         </div>
-        <div class="recent-vehicle">${[r.year,r.make,r.model].filter(Boolean).join(' ') || 'Vehicle info not entered'}</div>
-        <div class="recent-cats">
-          ${r.categories.map(c => `<span class="recent-cat-tag">${c}</span>`).join('')}
-        </div>
+        ${r.parking_spot ? `<div class="recent-spot">Parking: ${r.parking_spot}</div>` : ''}
+        <div class="recent-cats">${r.categories.map(c => `<span class="recent-cat-tag">${c}</span>`).join('')}</div>
       </div>
       <button class="delete-btn" onclick="deleteLocalReg('${r.car_number}','${r.timestamp}')">✕</button>
-    </div>
-  `).join('');
+    </div>`).join('');
 }
-
-// ── RESET ─────────────────────────────────────────────────────────
 function resetForm() {
-  ['car-number','owner-name','vehicle-make','vehicle-model','vehicle-year'].forEach(id => {
-    document.getElementById(id).value = '';
-  });
-  document.querySelectorAll('.cat-check-label').forEach(l => {
-    l.classList.remove('checked');
-    l.querySelector('input').checked = false;
-  });
+  ['car-number','owner-name','parking-spot'].forEach(id => document.getElementById(id).value = '');
+  document.querySelectorAll('.cat-check-label').forEach(l => { l.classList.remove('checked'); l.querySelector('input').checked = false; });
   onCatChange();
   document.getElementById('car-number').focus();
 }
-
-// ── TOAST ─────────────────────────────────────────────────────────
 function showToast(msg, type='') {
   const t = document.getElementById('toast');
   t.textContent = msg; t.className = 'toast ' + type;
   void t.offsetWidth; t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 3500);
 }
-
-// ── INIT ──────────────────────────────────────────────────────────
 renderRecentList();
 document.getElementById('reg-count').textContent = loadLocalRegs().length;
 onCatChange();
