@@ -255,7 +255,7 @@ async function loadCars() {
   }
 }
 
-function onCarSelect(carNum) {
+async function onCarSelect(carNum) {
   const infoCard = document.getElementById('car-info-card');
   const notFound = document.getElementById('not-found');
   const factorsSection = document.getElementById('factors-section');
@@ -269,14 +269,29 @@ function onCarSelect(carNum) {
   currentCar = car;
   document.getElementById('car-info-name').textContent = car.name + '  —  #' + car.car_number;
   document.getElementById('car-info-vehicle').textContent = [car.year, car.make, car.model].filter(Boolean).join(' ') || '';
+
+  // Fetch already scored categories for this car
+  let scoredCats = [];
+  try {
+    const res = await fetch(SHEET_URL + '?action=get', { cache: 'no-store', redirect: 'follow' });
+    const text = await res.text();
+    const data = JSON.parse(text);
+    scoredCats = (data.rows || [])
+      .filter(r => r.car_number === carNum)
+      .map(r => r.category);
+  } catch(e) { /* silently continue */ }
+
   const chips = document.getElementById('cat-chips');
   chips.innerHTML = '';
   car.categories.forEach(cat => {
     const chip = document.createElement('div');
-    chip.className = 'cat-chip'; chip.textContent = cat;
+    const alreadyScored = scoredCats.includes(cat);
+    chip.className = 'cat-chip' + (alreadyScored ? ' scored' : '');
+    chip.textContent = cat;
     chip.addEventListener('click', () => selectCategory(cat));
     chips.appendChild(chip);
   });
+
   infoCard.classList.add('show');
 }
 
