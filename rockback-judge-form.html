@@ -234,15 +234,24 @@ setInterval(() => { if (navigator.onLine) flushQueue(); }, 15000);
 // ── LOAD CARS ─────────────────────────────────────────────────────
 async function loadCars() {
   const sel = document.getElementById('car-select');
+  sel.innerHTML = '<option value="">— Loading... —</option>';
   try {
     const res = await fetch(SHEET_URL + '?action=getRegs', { cache: 'no-store', redirect: 'follow' });
     const text = await res.text();
-    const data = JSON.parse(text);
+    let data;
+    try { data = JSON.parse(text); } catch(e) {
+      sel.innerHTML = '<option value="">— Error parsing data —</option>';
+      return;
+    }
     allCars = (data.rows || []).sort((a,b) => a.car_number.localeCompare(b.car_number));
-    sel.innerHTML = '<option value="">— Select a car —</option>' +
+    if (!allCars.length) {
+      sel.innerHTML = '<option value="">— No cars registered yet —</option>';
+      return;
+    }
+    sel.innerHTML = '<option value="">— Select a car (' + allCars.length + ' registered) —</option>' +
       allCars.map(c => `<option value="${c.car_number}">#${c.car_number} — ${c.name}</option>`).join('');
   } catch(e) {
-    sel.innerHTML = '<option value="">— Could not load cars —</option>';
+    sel.innerHTML = '<option value="">— Failed to load: ' + e.message + ' —</option>';
   }
 }
 
