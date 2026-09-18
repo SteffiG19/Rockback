@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
-<title>Rockback Car Show — Judge Scoring</title>
+<title>RCKBCK Car Show — Judge Scoring</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
 <style>
   :root {
@@ -23,10 +23,8 @@
   body { background: var(--black); color: var(--white); font-family: 'DM Sans', sans-serif; min-height: 100vh; padding-bottom: 60px; }
 
   header {
-    background: var(--grey);
-    border-bottom: 2px solid var(--green);
-    padding: 16px 20px 12px;
-    position: sticky; top: 0; z-index: 100;
+    background: var(--grey); border-bottom: 2px solid var(--green);
+    padding: 16px 20px 12px; position: sticky; top: 0; z-index: 100;
     display: flex; align-items: center; justify-content: space-between;
     box-shadow: 0 0 20px rgba(57,255,20,0.15);
   }
@@ -39,10 +37,7 @@
   .pending-badge { display: none; background: var(--amber); color: #000; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px; }
   .pending-badge.show { display: inline-block; }
 
-  .offline-banner {
-    display: none; background: #1a1000; border-bottom: 1px solid rgba(245,158,11,0.3);
-    padding: 8px 20px; font-size: 12px; color: var(--amber); font-weight: 600; text-align: center;
-  }
+  .offline-banner { display: none; background: #1a1000; border-bottom: 1px solid rgba(245,158,11,0.3); padding: 8px 20px; font-size: 12px; color: var(--amber); font-weight: 600; text-align: center; }
   .offline-banner.show { display: block; }
 
   main { padding: 18px 16px; max-width: 520px; margin: 0 auto; }
@@ -50,34 +45,42 @@
   .card { background: var(--grey); border-radius: var(--radius); padding: 16px; margin-bottom: 12px; border: 1px solid #1e1e1e; }
   .card-label { font-size: 10px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--green); margin-bottom: 10px; opacity: 0.8; }
 
-  select, input[type="text"], textarea {
+  select, textarea {
     width: 100%; background: var(--grey2); border: 1px solid #2a2a2a;
     border-radius: 8px; color: var(--white); font-family: 'DM Sans', sans-serif;
     font-size: 16px; padding: 13px 14px; appearance: none; -webkit-appearance: none; outline: none; transition: border-color 0.2s;
   }
-  select:focus, input:focus, textarea:focus { border-color: var(--green); box-shadow: 0 0 0 2px rgba(57,255,20,0.1); }
+  select:focus, textarea:focus { border-color: var(--green); box-shadow: 0 0 0 2px rgba(57,255,20,0.1); }
   textarea { resize: none; height: 70px; font-size: 14px; }
   .select-wrap { position: relative; }
   .select-wrap::after { content: '▾'; position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: var(--text-muted); pointer-events: none; }
 
-  /* CAR INFO */
+  .lane-buttons { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+  .lane-btn {
+    background: var(--grey2); border: 1px solid #2a2a2a; border-radius: 10px;
+    color: var(--text-muted); font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px; letter-spacing: 2px; padding: 16px 8px;
+    cursor: pointer; transition: all 0.15s; text-align: center;
+    user-select: none; -webkit-user-select: none;
+  }
+  .lane-btn:active { transform: scale(0.95); }
+  .lane-btn.active { background: var(--green); color: #000; border-color: var(--green); box-shadow: 0 0 16px rgba(57,255,20,0.4); }
+  .lane-label { font-size: 9px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; display: block; margin-top: 2px; }
+
   .car-info-card { display: none; background: var(--green-dim); border: 1px solid var(--green-border); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 12px; }
   .car-info-card.show { display: block; }
-  .car-info-name { font-size: 16px; font-weight: 600; color: var(--green); margin-bottom: 4px; }
-  .car-info-vehicle { font-size: 13px; color: var(--text-muted); margin-bottom: 10px; }
+  .car-info-name { font-size: 16px; font-weight: 600; color: var(--green); margin-bottom: 2px; }
+  .car-info-vehicle { font-size: 12px; color: var(--text-muted); margin-bottom: 4px; }
+  .car-info-spot { font-size: 11px; color: rgba(57,255,20,0.5); margin-bottom: 10px; }
   .cat-chips { display: flex; flex-wrap: wrap; gap: 6px; }
-  .cat-chip {
-    padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600;
-    background: var(--grey2); color: var(--text-muted); border: 1px solid #2a2a2a;
-    cursor: pointer; transition: all 0.15s; user-select: none;
-  }
+  .cat-chip { padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; background: var(--grey2); color: var(--text-muted); border: 1px solid #2a2a2a; cursor: pointer; transition: all 0.15s; user-select: none; }
   .cat-chip.active { background: var(--green); color: #000; border-color: var(--green); box-shadow: 0 0 10px rgba(57,255,20,0.3); }
   .cat-chip.scored { background: rgba(57,255,20,0.06); color: var(--green); border-color: rgba(57,255,20,0.2); }
   .cat-chip.scored::after { content: ' ✓'; font-size: 11px; }
+
   .not-found { display: none; background: #1a0808; border: 1px solid rgba(255,68,68,0.2); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 12px; font-size: 13px; color: #ff6b6b; }
   .not-found.show { display: block; }
 
-  /* FACTORS */
   #factors-section { display: none; }
   .group-badge { display: inline-block; padding: 3px 12px; border-radius: 20px; font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 12px; }
   .group-badge.STATIC { background: rgba(129,140,248,0.15); color: #818cf8; border: 1px solid rgba(129,140,248,0.3); }
@@ -88,7 +91,7 @@
   .factor-row:last-child { border-bottom: none; }
   .factor-name { font-size: 14px; font-weight: 500; flex: 1; line-height: 1.3; }
   .score-control { display: flex; align-items: center; background: var(--grey2); border-radius: 8px; overflow: hidden; border: 1px solid #2a2a2a; flex-shrink: 0; }
-  .score-btn { background: none; border: none; color: var(--white); font-size: 20px; width: 40px; height: 40px; cursor: pointer; display: flex; align-items: center; justify-content: center; user-select: none; -webkit-user-select: none; transition: background 0.1s; }
+  .score-btn { background: none; border: none; color: var(--white); font-size: 20px; width: 44px; height: 44px; cursor: pointer; display: flex; align-items: center; justify-content: center; user-select: none; -webkit-user-select: none; transition: background 0.1s; }
   .score-btn:active { background: var(--green); color: #000; }
   .score-val { width: 34px; text-align: center; font-size: 17px; font-weight: 600; font-family: 'Bebas Neue', sans-serif; letter-spacing: 1px; }
 
@@ -97,31 +100,22 @@
   .total-val { font-family: 'Bebas Neue', sans-serif; font-size: 38px; color: var(--green); letter-spacing: 2px; line-height: 1; text-shadow: 0 0 15px rgba(57,255,20,0.4); }
   .total-max { font-size: 13px; color: var(--text-muted); margin-left: 3px; }
 
-  .submit-btn {
-    width: 100%; background: var(--green); color: #000; border: none;
-    border-radius: var(--radius); font-family: 'Bebas Neue', sans-serif;
-    font-size: 22px; letter-spacing: 3px; padding: 18px; cursor: pointer;
-    transition: all 0.2s; margin-top: 4px; box-shadow: 0 0 20px rgba(57,255,20,0.25);
-  }
+  .submit-btn { width: 100%; background: var(--green); color: #000; border: none; border-radius: var(--radius); font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 3px; padding: 18px; cursor: pointer; transition: all 0.2s; margin-top: 4px; box-shadow: 0 0 20px rgba(57,255,20,0.25); }
   .submit-btn:active { transform: scale(0.98); box-shadow: none; }
   .submit-btn:disabled { background: #333; color: #666; cursor: not-allowed; box-shadow: none; }
 
-  .toast {
-    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px);
-    background: #111; border: 1px solid var(--green); color: var(--green);
-    padding: 12px 22px; border-radius: 40px; font-size: 14px; font-weight: 500;
-    z-index: 999; transition: transform 0.35s cubic-bezier(.34,1.56,.64,1);
-    white-space: nowrap; box-shadow: 0 0 20px rgba(57,255,20,0.15); max-width: 90vw; text-align: center;
-  }
+  .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px); background: #111; border: 1px solid var(--green); color: var(--green); padding: 12px 22px; border-radius: 40px; font-size: 14px; font-weight: 500; z-index: 999; transition: transform 0.35s cubic-bezier(.34,1.56,.64,1); white-space: nowrap; box-shadow: 0 0 20px rgba(57,255,20,0.15); max-width: 90vw; text-align: center; }
   .toast.show { transform: translateX(-50%) translateY(0); }
   .toast.error { border-color: #ff4444; color: #ff4444; box-shadow: none; }
   .toast.warn { border-color: var(--amber); color: var(--amber); box-shadow: none; }
+
+  #car-section { display: none; }
 </style>
 </head>
 <body>
 <header>
   <div>
-    <h1>Rockback</h1>
+    <h1>RCKBCK</h1>
     <div class="sub">Car Show · Judge Scoring</div>
   </div>
   <div class="header-right">
@@ -130,81 +124,118 @@
   </div>
 </header>
 <div class="offline-banner" id="offline-banner">⚠ No signal — scores saved locally and will send automatically when connection returns</div>
+
 <main>
-
   <div class="card">
-    <div class="card-label">Judge</div>
-    <div class="select-wrap">
-      <select id="judge-select">
-        <option value="">— Select your name —</option>
-        <option>Judge 1</option>
-        <option>Judge 2</option>
-        <option>Judge 3</option>
-      </select>
+    <div class="card-label">Select Lane</div>
+    <div class="lane-buttons">
+      <button class="lane-btn" onclick="selectLane('A', this)">A<span class="lane-label">Lane</span></button>
+      <button class="lane-btn" onclick="selectLane('B', this)">B<span class="lane-label">Lane</span></button>
+      <button class="lane-btn" onclick="selectLane('C', this)">C<span class="lane-label">Lane</span></button>
+      <button class="lane-btn" onclick="selectLane('D', this)">D<span class="lane-label">Lane</span></button>
+      <button class="lane-btn" onclick="selectLane('E', this)">E<span class="lane-label">Lane</span></button>
     </div>
   </div>
 
-  <div class="card">
-    <div class="card-label">Select Car</div>
-    <div class="select-wrap">
-      <select id="car-select" onchange="onCarSelect(this.value)">
-        <option value="">— Loading registered cars... —</option>
-      </select>
-    </div>
-  </div>
-
-  <div class="car-info-card" id="car-info-card">
-    <div class="car-info-name" id="car-info-name"></div>
-    <div class="car-info-vehicle" id="car-info-vehicle"></div>
-    <div class="card-label" style="margin-bottom:8px">Entered Categories — tap to score</div>
-    <div class="cat-chips" id="cat-chips"></div>
-  </div>
-
-  <div class="not-found" id="not-found">⚠ Car not found. Please check registration.</div>
-
-  <div id="factors-section">
+  <div id="car-section">
     <div class="card">
-      <div id="group-badge-wrap"></div>
-      <div class="card-label">Score Each Factor <span style="color:#333;margin-left:4px">( 0 – 10 )</span></div>
-      <div id="factors-list"></div>
+      <div class="card-label" id="car-dropdown-label">Select Car</div>
+      <div class="select-wrap">
+        <select id="car-select" onchange="onCarSelect(this.value)">
+          <option value="">— Select a car —</option>
+        </select>
+      </div>
     </div>
-    <div class="total-bar">
-      <span class="total-label">Total Score</span>
-      <div><span class="total-val" id="total-display">0</span><span class="total-max" id="total-max">/100</span></div>
-    </div>
-    <div class="card">
-      <div class="card-label">Notes <span style="color:#333">(optional)</span></div>
-      <textarea id="notes" placeholder="Any additional observations..."></textarea>
-    </div>
-    <button class="submit-btn" id="submit-btn" onclick="submitScore()">SUBMIT SCORE</button>
-  </div>
 
+    <div class="car-info-card" id="car-info-card">
+      <div class="car-info-name" id="car-info-name"></div>
+      <div class="car-info-vehicle" id="car-info-vehicle"></div>
+      <div class="car-info-spot" id="car-info-spot"></div>
+      <div class="card-label" style="margin-bottom:8px">Entered Categories — tap to score</div>
+      <div class="cat-chips" id="cat-chips"></div>
+    </div>
+
+    <div class="not-found" id="not-found">⚠ Car not found. Please check registration.</div>
+
+    <div id="factors-section">
+      <div class="card">
+        <div id="group-badge-wrap"></div>
+        <div class="card-label">Score Each Factor <span style="color:#333;margin-left:4px">( 0 – 10 )</span></div>
+        <div id="factors-list"></div>
+      </div>
+      <div class="total-bar">
+        <span class="total-label">Total Score</span>
+        <div><span class="total-val" id="total-display">0</span><span class="total-max" id="total-max">/100</span></div>
+      </div>
+      <div class="card">
+        <div class="card-label">Notes <span style="color:#333">(optional)</span></div>
+        <textarea id="notes" placeholder="Any additional observations..."></textarea>
+      </div>
+      <button class="submit-btn" id="submit-btn" onclick="submitScore()">SUBMIT SCORE</button>
+    </div>
+  </div>
 </main>
 <div class="toast" id="toast"></div>
+
 <script>
 const SHEET_URL = "https://script.google.com/macros/s/AKfycbynxTbwFabFadw2jB_2abF9QS-gqtGtG_iBzB3N-_tEGyU_PpWOrBIHB2hwSedjplw/exec";
 const QUEUE_KEY = 'rockback_judge_queue';
 
+const WALK_AROUND = [
+  "Rim and Tyre",
+  "Left Front Fender",
+  "Left Front Door",
+  "Left Front Doorjam",
+  "Left Rear Door",
+  "Left Rear Doorjam",
+  "Left Rear Fender",
+  "Trunk",
+  "Right Rear Fender",
+  "Right Rear Door",
+  "Right Rear Doorjam",
+  "Right Front Door",
+  "Right Front Doorjam",
+  "Right Front Fender",
+  "Hood",
+  "Engine Bay"
+];
+
 const GROUP_FACTORS = {
-  STATIC: ["Rim and Tyre","Left Fenders","Rear L Door","Rear L Doorjam","Right Fenders","Rear R Door","Rear R Doorjam","Engine Bay","Height","Fitment"],
-  BAGGED: ["Rim and Tyre","Left Fenders","Rear L Door","Rear L Doorjam","Right Fenders","Rear R Door","Rear R Doorjam","Engine Bay","Trunk Setup","Vehicle Condition","Height","Fitment","Functionality"],
-  OVERALL: ["Rim and Tyre","Left Fenders","Front L Door","Rear L Door","Right Fenders","Front R Door","Rear R Door","Hood","Engine Bay","Trunk","Interior","Under Carriage","Glass and Lights"]
+  STATIC: [
+    ...WALK_AROUND,
+    "Height",
+    "Fitment"
+  ],
+  BAGGED: [
+    ...WALK_AROUND,
+    "Trunk Setup",
+    "Vehicle Condition",
+    "Height",
+    "Fitment",
+    "Functionality"
+  ],
+  OVERALL: [
+    ...WALK_AROUND,
+    "Interior",
+    "Under Carriage",
+    "Glass and Lights"
+  ]
 };
 
 const CAT_GROUP = {
-  "Low with Standards 18": "STATIC", "Low with Standards 20": "STATIC", "Best Stance": "STATIC",
-  "Low and Fresh 18": "BAGGED", "Low and Fresh 20": "BAGGED", "Low and Fresh 22": "BAGGED", "Best Fitment": "BAGGED",
-  "Best Paint Job": "OVERALL", "Best Wrap": "OVERALL", "Best Nissan": "OVERALL", "Best Toyota": "OVERALL",
-  "Best Honda": "OVERALL", "Best Mazda": "OVERALL", "Best Mitsubishi": "OVERALL", "Best Van": "OVERALL",
-  "Best Panel Van": "OVERALL", "Best SUV": "OVERALL", "Old School": "OVERALL", "Engine Bay": "OVERALL", "Best Offroad": "OVERALL"
+  "Low with Standards 18":"STATIC","Low with Standards 20":"STATIC","Best Stance":"STATIC",
+  "Low and Fresh 18":"BAGGED","Low and Fresh 20":"BAGGED","Low and Fresh 22":"BAGGED","Best Fitment":"BAGGED",
+  "Best Paint Job":"OVERALL","Best Wrap":"OVERALL","Best Nissan":"OVERALL","Best Toyota":"OVERALL",
+  "Best Honda":"OVERALL","Best Mazda":"OVERALL","Best Mitsubishi":"OVERALL","Best Van":"OVERALL",
+  "Best Panel Van":"OVERALL","Best SUV":"OVERALL","Old School":"OVERALL","Engine Bay":"OVERALL","Best Offroad":"OVERALL"
 };
 
 let scores = {};
 let currentCar = null;
 let currentCategory = null;
+let currentLane = null;
 let allCars = [];
 
-// ── STORE & FORWARD ───────────────────────────────────────────────
 function loadQueue() { try { return JSON.parse(localStorage.getItem(QUEUE_KEY) || '[]'); } catch(e) { return []; } }
 function saveQueue(q) { localStorage.setItem(QUEUE_KEY, JSON.stringify(q)); }
 function enqueue(p) { const q = loadQueue(); q.push(p); saveQueue(q); updatePendingBadge(); }
@@ -231,37 +262,40 @@ window.addEventListener('online', () => setOnlineStatus(true));
 window.addEventListener('offline', () => setOnlineStatus(false));
 setInterval(() => { if (navigator.onLine) flushQueue(); }, 15000);
 
-// ── LOAD CARS ─────────────────────────────────────────────────────
-async function loadCars() {
-  const sel = document.getElementById('car-select');
-  sel.innerHTML = '<option value="">— Loading... —</option>';
+async function loadAllCars() {
   try {
     const res = await fetch(SHEET_URL + '?action=getRegs', { cache: 'no-store', redirect: 'follow' });
-    const text = await res.text();
-    let data;
-    try { data = JSON.parse(text); } catch(e) {
-      sel.innerHTML = '<option value="">— Error parsing data —</option>';
-      return;
-    }
-    allCars = (data.rows || []).sort((a,b) => a.car_number.localeCompare(b.car_number));
-    if (!allCars.length) {
-      sel.innerHTML = '<option value="">— No cars registered yet —</option>';
-      return;
-    }
-    sel.innerHTML = '<option value="">— Select a car (' + allCars.length + ' registered) —</option>' +
-      allCars.map(c => `<option value="${c.car_number}">#${c.car_number} — ${c.name}</option>`).join('');
-  } catch(e) {
-    sel.innerHTML = '<option value="">— Failed to load: ' + e.message + ' —</option>';
-  }
+    const data = JSON.parse(await res.text());
+    allCars = data.rows || [];
+  } catch(e) { allCars = []; }
+}
+
+function selectLane(lane, btn) {
+  currentLane = lane;
+  document.querySelectorAll('.lane-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const laneCars = allCars
+    .filter(c => c.parking_spot && c.parking_spot.toUpperCase().startsWith(lane))
+    .sort((a,b) => a.parking_spot.localeCompare(b.parking_spot));
+  const sel = document.getElementById('car-select');
+  sel.innerHTML = laneCars.length
+    ? '<option value="">— Select a car (' + laneCars.length + ' in Lane ' + lane + ') —</option>' +
+      laneCars.map(c => `<option value="${c.car_number}">#${c.car_number} — ${c.name} (${c.parking_spot})</option>`).join('')
+    : '<option value="">— No cars registered in Lane ' + lane + ' —</option>';
+  document.getElementById('car-info-card').classList.remove('show');
+  document.getElementById('not-found').classList.remove('show');
+  document.getElementById('factors-section').style.display = 'none';
+  document.getElementById('car-dropdown-label').textContent = 'Lane ' + lane + ' Cars';
+  document.getElementById('car-section').style.display = 'block';
+  currentCar = null; currentCategory = null; scores = {};
 }
 
 async function onCarSelect(carNum) {
   const infoCard = document.getElementById('car-info-card');
   const notFound = document.getElementById('not-found');
-  const factorsSection = document.getElementById('factors-section');
   infoCard.classList.remove('show');
   notFound.classList.remove('show');
-  factorsSection.style.display = 'none';
+  document.getElementById('factors-section').style.display = 'none';
   currentCar = null; currentCategory = null;
   if (!carNum) return;
   const car = allCars.find(c => c.car_number === carNum);
@@ -269,41 +303,32 @@ async function onCarSelect(carNum) {
   currentCar = car;
   document.getElementById('car-info-name').textContent = car.name + '  —  #' + car.car_number;
   document.getElementById('car-info-vehicle').textContent = [car.year, car.make, car.model].filter(Boolean).join(' ') || '';
+  document.getElementById('car-info-spot').textContent = car.parking_spot ? '🅿 Spot ' + car.parking_spot : '';
 
-  // Fetch already scored categories for this car
   let scoredCats = [];
   try {
     const res = await fetch(SHEET_URL + '?action=get', { cache: 'no-store', redirect: 'follow' });
-    const text = await res.text();
-    const data = JSON.parse(text);
-    scoredCats = (data.rows || [])
-      .filter(r => r.car_number === carNum)
-      .map(r => r.category);
-  } catch(e) { /* silently continue */ }
+    const data = JSON.parse(await res.text());
+    scoredCats = (data.rows || []).filter(r => r.car_number === carNum).map(r => r.category);
+  } catch(e) {}
 
   const chips = document.getElementById('cat-chips');
   chips.innerHTML = '';
   car.categories.forEach(cat => {
     const chip = document.createElement('div');
-    const alreadyScored = scoredCats.includes(cat);
-    chip.className = 'cat-chip' + (alreadyScored ? ' scored' : '');
+    chip.className = 'cat-chip' + (scoredCats.includes(cat) ? ' scored' : '');
     chip.textContent = cat;
     chip.addEventListener('click', () => selectCategory(cat));
     chips.appendChild(chip);
   });
-
   infoCard.classList.add('show');
 }
 
 function selectCategory(cat) {
   document.querySelectorAll('.cat-chip').forEach(c => {
     const chipCat = c.textContent.replace(' ✓','');
-    if (chipCat === cat) {
-      c.classList.remove('scored');
-      c.classList.add('active');
-    } else {
-      c.classList.remove('active');
-    }
+    if (chipCat === cat) { c.classList.remove('scored'); c.classList.add('active'); }
+    else { c.classList.remove('active'); }
   });
   currentCategory = cat;
   const group = CAT_GROUP[cat];
@@ -333,19 +358,21 @@ function adj(factor, delta) {
 }
 
 async function submitScore() {
-  const judge = document.getElementById('judge-select').value;
   const notes = document.getElementById('notes').value.trim();
-  if (!judge) { showToast('Please select your name', 'error'); return; }
-  if (!currentCar) { showToast('Please select a car', 'error'); return; }
+  if (!currentLane)     { showToast('Please select a lane', 'error'); return; }
+  if (!currentCar)      { showToast('Please select a car', 'error'); return; }
   if (!currentCategory) { showToast('Please select a category', 'error'); return; }
   const total = Object.values(scores).reduce((a,b) => a+b, 0);
   const group = CAT_GROUP[currentCategory];
   const btn = document.getElementById('submit-btn');
   btn.disabled = true; btn.textContent = 'SUBMITTING...';
   const payload = {
-    timestamp: new Date().toISOString(), judge,
-    car_number: currentCar.car_number, owner_name: currentCar.name,
-    category: currentCategory, group, scores: JSON.stringify(scores),
+    timestamp: new Date().toISOString(),
+    lane: 'Lane ' + currentLane,
+    car_number: currentCar.car_number,
+    owner_name: currentCar.name,
+    category: currentCategory, group,
+    scores: JSON.stringify(scores),
     total, max: (GROUP_FACTORS[group] || []).length * 10, notes
   };
   if (!navigator.onLine) {
@@ -366,14 +393,10 @@ async function submitScore() {
 function resetAfterSubmit() {
   document.getElementById('notes').value = '';
   document.getElementById('factors-section').style.display = 'none';
-  // Mark scored category chip, keep car loaded
   document.querySelectorAll('.cat-chip').forEach(c => {
-    if (c.textContent.replace(' ✓','') === currentCategory) {
-      c.classList.remove('active');
-      c.classList.add('scored');
-    } else {
-      c.classList.remove('active');
-    }
+    const chipCat = c.textContent.replace(' ✓','');
+    if (chipCat === currentCategory) { c.classList.remove('active'); c.classList.add('scored'); }
+    else { c.classList.remove('active'); }
   });
   currentCategory = null; scores = {};
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -388,7 +411,7 @@ function showToast(msg, type='') {
 
 setOnlineStatus(navigator.onLine);
 updatePendingBadge();
-loadCars();
+loadAllCars();
 </script>
 </body>
 </html>

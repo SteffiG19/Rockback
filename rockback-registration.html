@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
-<title>Rockback Car Show — Registration</title>
+<title>RCKBCK Car Show — Registration</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
 <style>
   :root {
@@ -116,7 +116,7 @@
 <body>
 <header>
   <div>
-    <h1>Rockback</h1>
+    <h1>RCKBCK</h1>
     <div class="sub">Registration Desk</div>
   </div>
   <div style="text-align:right">
@@ -145,8 +145,8 @@
     <input type="text" id="vehicle-year" placeholder="Year (e.g. 2020)" maxlength="4" inputmode="numeric" autocomplete="off"/>
   </div>
   <div class="card">
-    <div class="card-label">Parking Spot <span class="optional-tag">(optional)</span></div>
-    <input type="text" id="parking-spot" placeholder="e.g. B4"
+    <div class="card-label">Parking Spot</div>
+    <input type="text" id="parking-spot" placeholder="e.g. A4, B12"
       maxlength="10" autocomplete="off" autocorrect="off"
       autocapitalize="characters" spellcheck="false"
       oninput="this.value=this.value.toUpperCase()"/>
@@ -225,6 +225,7 @@ async function submitReg() {
   const cats    = getSelectedCats();
   if (!carNum) { showToast('Car number required', 'error'); return; }
   if (!name)   { showToast('Participant name required', 'error'); return; }
+  if (!parking) { showToast('Parking spot required', 'error'); return; }
   if (!cats.length) { showToast('Select at least one category', 'error'); return; }
   const btn = document.getElementById('submit-btn');
   btn.disabled = true; btn.textContent = 'REGISTERING...';
@@ -269,7 +270,7 @@ function renderRecentList() {
           <div class="recent-car">#${r.car_number}</div>
           <div class="recent-name">${r.name}</div>
         </div>
-        ${r.parking_spot ? `<div class="recent-spot">Parking: ${r.parking_spot}</div>` : ''}
+        <div class="recent-spot">🅿 ${r.parking_spot || '—'} &nbsp;·&nbsp; ${[r.year,r.make,r.model].filter(Boolean).join(' ') || ''}</div>
         <div class="recent-cats">${r.categories.map(c => `<span class="recent-cat-tag">${c}</span>`).join('')}</div>
       </div>
       <button class="delete-btn" onclick="deleteLocalReg('${r.car_number}','${r.timestamp}')">✕</button>
