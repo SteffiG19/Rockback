@@ -93,7 +93,18 @@
   .score-control { display: flex; align-items: center; background: var(--grey2); border-radius: 8px; overflow: hidden; border: 1px solid #2a2a2a; flex-shrink: 0; }
   .score-btn { background: none; border: none; color: var(--white); font-size: 20px; width: 44px; height: 44px; cursor: pointer; display: flex; align-items: center; justify-content: center; user-select: none; -webkit-user-select: none; transition: background 0.1s; }
   .score-btn:active { background: var(--green); color: #000; }
-  .score-val { width: 34px; text-align: center; font-size: 17px; font-weight: 600; font-family: 'Bebas Neue', sans-serif; letter-spacing: 1px; }
+  .score-val {
+    width: 44px; text-align: center; font-size: 17px; font-weight: 600;
+    font-family: 'Bebas Neue', sans-serif; letter-spacing: 1px;
+    background: none; border: none; color: var(--white);
+    outline: none; cursor: pointer; padding: 0;
+    -webkit-appearance: none;
+  }
+  .score-val:focus {
+    background: rgba(57,255,20,0.1);
+    border-radius: 4px;
+    color: var(--green);
+  }
 
   .total-bar { background: var(--grey); border-radius: var(--radius); padding: 14px 18px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; border: 1px solid #1e1e1e; }
   .total-label { font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); }
@@ -275,7 +286,7 @@ function selectLane(lane, btn) {
   document.querySelectorAll('.lane-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   const laneCars = allCars
-    .filter(c => c.parking_spot && c.parking_spot.toUpperCase().startsWith(lane))
+    .filter(c => c.parking_spot && c.parking_spot.toUpperCase().startsWith(lane.toUpperCase()))
     .sort((a,b) => a.parking_spot.localeCompare(b.parking_spot));
   const sel = document.getElementById('car-select');
   sel.innerHTML = laneCars.length
@@ -341,19 +352,35 @@ function selectCategory(cat) {
       <div class="factor-name">${f}</div>
       <div class="score-control">
         <button class="score-btn" onclick="adj('${f}',-1)">−</button>
-        <div class="score-val" id="sv-${slug(f)}">0</div>
+        <input class="score-val" id="sv-${slug(f)}" type="number" 
+          value="0" min="0" max="10" inputmode="numeric"
+          onchange="setScore('${f}', this.value)"
+          onfocus="this.select()"
+        />
         <button class="score-btn" onclick="adj('${f}',1)">+</button>
       </div>
     </div>`).join('');
   document.getElementById('total-display').textContent = '0';
   document.getElementById('factors-section').style.display = 'block';
   document.getElementById('factors-section').scrollIntoView({ behavior:'smooth', block:'start' });
+  updateTotal();
 }
 
 function slug(s) { return s.replace(/[^a-z0-9]/gi,'_').toLowerCase(); }
 function adj(factor, delta) {
-  scores[factor] = Math.max(0, Math.min(10, scores[factor] + delta));
-  document.getElementById('sv-' + slug(factor)).textContent = scores[factor];
+  scores[factor] = Math.max(0, Math.min(10, (scores[factor] || 0) + delta));
+  document.getElementById('sv-' + slug(factor)).value = scores[factor];
+  updateTotal();
+}
+function setScore(factor, val) {
+  let n = parseInt(val);
+  if (isNaN(n)) n = 0;
+  n = Math.max(0, Math.min(10, n));
+  scores[factor] = n;
+  document.getElementById('sv-' + slug(factor)).value = n;
+  updateTotal();
+}
+function updateTotal() {
   document.getElementById('total-display').textContent = Object.values(scores).reduce((a,b) => a+b, 0);
 }
 
