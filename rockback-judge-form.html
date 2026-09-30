@@ -45,13 +45,12 @@
   .card { background: var(--grey); border-radius: var(--radius); padding: 16px; margin-bottom: 12px; border: 1px solid #1e1e1e; }
   .card-label { font-size: 10px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--green); margin-bottom: 10px; opacity: 0.8; }
 
-  select, textarea {
+  select {
     width: 100%; background: var(--grey2); border: 1px solid #2a2a2a;
     border-radius: 8px; color: var(--white); font-family: 'DM Sans', sans-serif;
     font-size: 16px; padding: 13px 14px; appearance: none; -webkit-appearance: none; outline: none; transition: border-color 0.2s;
   }
-  select:focus, textarea:focus { border-color: var(--green); box-shadow: 0 0 0 2px rgba(57,255,20,0.1); }
-  textarea { resize: none; height: 70px; font-size: 14px; }
+  select:focus { border-color: var(--green); box-shadow: 0 0 0 2px rgba(57,255,20,0.1); }
   .select-wrap { position: relative; }
   .select-wrap::after { content: '▾'; position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: var(--text-muted); pointer-events: none; }
 
@@ -87,24 +86,32 @@
   .group-badge.BAGGED { background: rgba(245,158,11,0.15); color: var(--amber); border: 1px solid rgba(245,158,11,0.3); }
   .group-badge.OVERALL { background: var(--green-dim); color: var(--green); border: 1px solid var(--green-border); }
 
-  .factor-row { display: flex; align-items: center; justify-content: space-between; padding: 11px 0; border-bottom: 1px solid #1e1e1e; gap: 12px; }
-  .factor-row:last-child { border-bottom: none; }
-  .factor-name { font-size: 14px; font-weight: 500; flex: 1; line-height: 1.3; }
-  .score-control { display: flex; align-items: center; background: var(--grey2); border-radius: 8px; overflow: hidden; border: 1px solid #2a2a2a; flex-shrink: 0; }
-  .score-btn { background: none; border: none; color: var(--white); font-size: 20px; width: 44px; height: 44px; cursor: pointer; display: flex; align-items: center; justify-content: center; user-select: none; -webkit-user-select: none; transition: background 0.1s; }
+  .score-section { margin-bottom: 10px; }
+  .score-section-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+  .score-section-label { font-size: 14px; font-weight: 600; color: var(--white); letter-spacing: 0.5px; }
+  .score-big-control { display: flex; align-items: center; background: var(--grey2); border-radius: 10px; overflow: hidden; border: 1px solid #2a2a2a; }
+  .score-btn { background: none; border: none; color: var(--white); font-size: 22px; width: 48px; height: 52px; cursor: pointer; display: flex; align-items: center; justify-content: center; user-select: none; -webkit-user-select: none; transition: background 0.1s; }
   .score-btn:active { background: var(--green); color: #000; }
   .score-val {
-    width: 44px; text-align: center; font-size: 17px; font-weight: 600;
+    width: 64px; text-align: center; font-size: 26px; font-weight: 700;
     font-family: 'Bebas Neue', sans-serif; letter-spacing: 1px;
-    background: none; border: none; color: var(--white);
+    background: none; border: none; color: var(--green);
     outline: none; cursor: pointer; padding: 0;
     -webkit-appearance: none;
   }
-  .score-val:focus {
-    background: rgba(57,255,20,0.1);
-    border-radius: 4px;
-    color: var(--green);
+  .score-val:focus { background: rgba(57,255,20,0.1); border-radius: 4px; }
+  .score-max { font-size: 11px; color: var(--text-muted); margin-left: 4px; align-self: flex-end; padding-bottom: 6px; }
+  .score-notes { margin-top: 8px; }
+  .score-notes textarea {
+    width: 100%; background: var(--grey2); border: 1px solid #2a2a2a;
+    border-radius: 8px; color: var(--white); font-family: 'DM Sans', sans-serif;
+    font-size: 14px; padding: 11px 13px; outline: none; resize: none;
+    height: 72px; transition: border-color 0.2s;
   }
+  .score-notes textarea:focus { border-color: var(--green); }
+  .score-notes-label { font-size: 10px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; }
+  .section-divider { border: none; border-top: 1px solid #1e1e1e; margin: 14px 0; }
+  .faults-label { font-size: 14px; font-weight: 600; color: #ff6b6b; margin-bottom: 8px; }
 
   .total-bar { background: var(--grey); border-radius: var(--radius); padding: 14px 18px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; border: 1px solid #1e1e1e; }
   .total-label { font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); }
@@ -181,16 +188,67 @@
     <div id="factors-section">
       <div class="card">
         <div id="group-badge-wrap"></div>
-        <div class="card-label">Score Each Factor <span style="color:#333;margin-left:4px">( 0 – 10 )</span></div>
-        <div id="factors-list"></div>
+
+        <!-- Interior -->
+        <div class="score-section">
+          <div class="score-section-head">
+            <div class="score-section-label">Interior</div>
+            <div style="display:flex;align-items:center;gap:4px">
+              <div class="score-big-control">
+                <button class="score-btn" onclick="adj('interior',-1)">−</button>
+                <input class="score-val" id="sv-interior" type="number"
+                  value="0" min="0" max="100" inputmode="numeric"
+                  onchange="setScore('interior', this.value)"
+                  onfocus="this.select()"
+                />
+                <button class="score-btn" onclick="adj('interior',1)">+</button>
+              </div>
+              <span class="score-max">/100</span>
+            </div>
+          </div>
+          <div class="score-notes">
+            <div class="score-notes-label">Notes</div>
+            <textarea id="notes-interior" placeholder="Interior observations..."></textarea>
+          </div>
+        </div>
+
+        <hr class="section-divider"/>
+
+        <!-- Exterior -->
+        <div class="score-section">
+          <div class="score-section-head">
+            <div class="score-section-label">Exterior</div>
+            <div style="display:flex;align-items:center;gap:4px">
+              <div class="score-big-control">
+                <button class="score-btn" onclick="adj('exterior',-1)">−</button>
+                <input class="score-val" id="sv-exterior" type="number"
+                  value="0" min="0" max="100" inputmode="numeric"
+                  onchange="setScore('exterior', this.value)"
+                  onfocus="this.select()"
+                />
+                <button class="score-btn" onclick="adj('exterior',1)">+</button>
+              </div>
+              <span class="score-max">/100</span>
+            </div>
+          </div>
+          <div class="score-notes">
+            <div class="score-notes-label">Notes</div>
+            <textarea id="notes-exterior" placeholder="Exterior observations..."></textarea>
+          </div>
+        </div>
+
+        <hr class="section-divider"/>
+
+        <!-- Faults -->
+        <div class="score-section">
+          <div class="faults-label">Faults</div>
+          <textarea id="notes-faults" placeholder="Note any faults or deductions..." style="width:100%;background:var(--grey2);border:1px solid rgba(255,107,107,0.2);border-radius:8px;color:var(--white);font-family:'DM Sans',sans-serif;font-size:14px;padding:11px 13px;outline:none;resize:none;height:72px;transition:border-color 0.2s;" onfocus="this.style.borderColor='#ff6b6b'" onblur="this.style.borderColor='rgba(255,107,107,0.2)'"></textarea>
+        </div>
       </div>
+
       <div class="total-bar">
         <span class="total-label">Total Score</span>
-        <div><span class="total-val" id="total-display">0</span><span class="total-max" id="total-max">/100</span></div>
-      </div>
-      <div class="card">
-        <div class="card-label">Notes <span style="color:#333">(optional)</span></div>
-        <textarea id="notes" placeholder="Any additional observations..."></textarea>
+        <div><span class="total-val" id="total-display">0</span><span class="total-max">/200</span></div>
       </div>
       <button class="submit-btn" id="submit-btn" onclick="submitScore()">SUBMIT SCORE</button>
     </div>
@@ -202,47 +260,6 @@
 const SHEET_URL = "https://script.google.com/macros/s/AKfycbynxTbwFabFadw2jB_2abF9QS-gqtGtG_iBzB3N-_tEGyU_PpWOrBIHB2hwSedjplw/exec";
 const QUEUE_KEY = 'rockback_judge_queue';
 
-const WALK_AROUND = [
-  "Rim and Tyre",
-  "Left Front Fender",
-  "Left Front Door",
-  "Left Front Doorjam",
-  "Left Rear Door",
-  "Left Rear Doorjam",
-  "Left Rear Fender",
-  "Trunk",
-  "Right Rear Fender",
-  "Right Rear Door",
-  "Right Rear Doorjam",
-  "Right Front Door",
-  "Right Front Doorjam",
-  "Right Front Fender",
-  "Hood",
-  "Engine Bay"
-];
-
-const GROUP_FACTORS = {
-  STATIC: [
-    ...WALK_AROUND,
-    "Height",
-    "Fitment"
-  ],
-  BAGGED: [
-    ...WALK_AROUND,
-    "Trunk Setup",
-    "Vehicle Condition",
-    "Height",
-    "Fitment",
-    "Functionality"
-  ],
-  OVERALL: [
-    ...WALK_AROUND,
-    "Interior",
-    "Under Carriage",
-    "Glass and Lights"
-  ]
-};
-
 const CAT_GROUP = {
   "Low with Standards 18":"STATIC","Low with Standards 20":"STATIC","Best Stance":"STATIC",
   "Low and Fresh 18":"BAGGED","Low and Fresh 20":"BAGGED","Low and Fresh 22":"BAGGED","Best Fitment":"BAGGED",
@@ -251,7 +268,8 @@ const CAT_GROUP = {
   "Best Panel Van":"OVERALL","Best SUV":"OVERALL","Old School":"OVERALL","Engine Bay":"OVERALL","Best Offroad":"OVERALL"
 };
 
-let scores = {};
+// Scores are now just two sections: interior + exterior (each 0-100)
+let scores = { interior: 0, exterior: 0 };
 let currentCar = null;
 let currentCategory = null;
 let currentLane = null;
@@ -384,65 +402,63 @@ function selectCategory(cat) {
     else { c.classList.remove('active'); }
   });
   currentCategory = cat;
-  const group = CAT_GROUP[cat];
-  const factors = GROUP_FACTORS[group] || [];
-  scores = {}; factors.forEach(f => scores[f] = 0);
+  const group = CAT_GROUP[cat] || 'OVERALL';
+  scores = { interior: 0, exterior: 0 };
   document.getElementById('group-badge-wrap').innerHTML = `<span class="group-badge ${group}">${group}</span>`;
-  document.getElementById('total-max').textContent = '/' + (factors.length * 10);
-  document.getElementById('factors-list').innerHTML = factors.map(f => `
-    <div class="factor-row">
-      <div class="factor-name">${f}</div>
-      <div class="score-control">
-        <button class="score-btn" onclick="adj('${f}',-1)">−</button>
-        <input class="score-val" id="sv-${slug(f)}" type="number" 
-          value="0" min="0" max="10" inputmode="numeric"
-          onchange="setScore('${f}', this.value)"
-          onfocus="this.select()"
-        />
-        <button class="score-btn" onclick="adj('${f}',1)">+</button>
-      </div>
-    </div>`).join('');
+  document.getElementById('sv-interior').value = 0;
+  document.getElementById('sv-exterior').value = 0;
+  document.getElementById('notes-interior').value = '';
+  document.getElementById('notes-exterior').value = '';
+  document.getElementById('notes-faults').value = '';
   document.getElementById('total-display').textContent = '0';
   document.getElementById('factors-section').style.display = 'block';
   document.getElementById('factors-section').scrollIntoView({ behavior:'smooth', block:'start' });
-  updateTotal();
 }
 
-function slug(s) { return s.replace(/[^a-z0-9]/gi,'_').toLowerCase(); }
-function adj(factor, delta) {
-  scores[factor] = Math.max(0, Math.min(10, (scores[factor] || 0) + delta));
-  document.getElementById('sv-' + slug(factor)).value = scores[factor];
+function adj(section, delta) {
+  scores[section] = Math.max(0, Math.min(100, (scores[section] || 0) + delta));
+  document.getElementById('sv-' + section).value = scores[section];
   updateTotal();
 }
-function setScore(factor, val) {
+function setScore(section, val) {
   let n = parseInt(val);
   if (isNaN(n)) n = 0;
-  n = Math.max(0, Math.min(10, n));
-  scores[factor] = n;
-  document.getElementById('sv-' + slug(factor)).value = n;
+  n = Math.max(0, Math.min(100, n));
+  scores[section] = n;
+  document.getElementById('sv-' + section).value = n;
   updateTotal();
 }
 function updateTotal() {
-  document.getElementById('total-display').textContent = Object.values(scores).reduce((a,b) => a+b, 0);
+  document.getElementById('total-display').textContent = (scores.interior || 0) + (scores.exterior || 0);
 }
 
 async function submitScore() {
-  const notes = document.getElementById('notes').value.trim();
   if (!currentLane)     { showToast('Please select a lane', 'error'); return; }
   if (!currentCar)      { showToast('Please select a car', 'error'); return; }
   if (!currentCategory) { showToast('Please select a category', 'error'); return; }
-  const total = Object.values(scores).reduce((a,b) => a+b, 0);
-  const group = CAT_GROUP[currentCategory];
+  const interiorScore  = scores.interior || 0;
+  const exteriorScore  = scores.exterior || 0;
+  const total = interiorScore + exteriorScore;
+  const notesInterior = document.getElementById('notes-interior').value.trim();
+  const notesExterior = document.getElementById('notes-exterior').value.trim();
+  const notesFaults   = document.getElementById('notes-faults').value.trim();
+  const group = CAT_GROUP[currentCategory] || 'OVERALL';
   const btn = document.getElementById('submit-btn');
   btn.disabled = true; btn.textContent = 'SUBMITTING...';
+  const notesCompiled = [
+    notesInterior ? 'Interior: ' + notesInterior : '',
+    notesExterior ? 'Exterior: ' + notesExterior : '',
+    notesFaults   ? 'Faults: '   + notesFaults   : ''
+  ].filter(Boolean).join(' | ');
   const payload = {
     timestamp: new Date().toISOString(),
     lane: 'Lane ' + currentLane,
     car_number: currentCar.car_number,
     owner_name: currentCar.name,
     category: currentCategory, group,
-    scores: JSON.stringify(scores),
-    total, max: (GROUP_FACTORS[group] || []).length * 10, notes
+    scores: JSON.stringify({ interior: interiorScore, exterior: exteriorScore }),
+    total, max: 200,
+    notes: notesCompiled
   };
   if (!navigator.onLine) {
     enqueue(payload); showToast('Saved offline — will send when signal returns', 'warn');
@@ -460,14 +476,17 @@ async function submitScore() {
 }
 
 function resetAfterSubmit() {
-  document.getElementById('notes').value = '';
+  document.getElementById('notes-interior').value = '';
+  document.getElementById('notes-exterior').value = '';
+  document.getElementById('notes-faults').value = '';
+  scores = { interior: 0, exterior: 0 };
   document.getElementById('factors-section').style.display = 'none';
   document.querySelectorAll('.cat-chip').forEach(c => {
     const chipCat = c.textContent.replace(' ✓','');
     if (chipCat === currentCategory) { c.classList.remove('active'); c.classList.add('scored'); }
     else { c.classList.remove('active'); }
   });
-  currentCategory = null; scores = {};
+  currentCategory = null;
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
