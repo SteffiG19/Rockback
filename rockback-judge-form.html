@@ -151,6 +151,16 @@
   <div id="car-section">
     <div class="card">
       <div class="card-label" id="car-dropdown-label">Select Car</div>
+      <input type="text" id="car-search" placeholder="Search by number, name or spot…"
+        autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false"
+        oninput="filterCars(this.value)"
+        style="width:100%;background:var(--grey2);border:1px solid #2a2a2a;border-radius:8px;
+               color:var(--white);font-family:'DM Sans',sans-serif;font-size:15px;
+               padding:12px 14px;outline:none;margin-bottom:10px;box-sizing:border-box;
+               -webkit-appearance:none;transition:border-color 0.2s;"
+        onfocus="this.style.borderColor='var(--green)'"
+        onblur="this.style.borderColor='#2a2a2a'"
+      />
       <div class="select-wrap">
         <select id="car-select" onchange="onCarSelect(this.value)">
           <option value="">— Select a car —</option>
@@ -281,13 +291,45 @@ async function loadAllCars() {
   } catch(e) { allCars = []; }
 }
 
+// Returns the cars currently scoped to the active lane
+function laneScopedCars() {
+  if (!currentLane) return allCars;
+  return allCars.filter(c => c.parking_spot && c.parking_spot.toUpperCase().startsWith(currentLane.toUpperCase()))
+                .sort((a,b) => a.parking_spot.localeCompare(b.parking_spot));
+}
+
+function filterCars(query) {
+  const q = query.trim().toUpperCase();
+  const pool = laneScopedCars();
+  const filtered = q
+    ? pool.filter(c =>
+        (c.car_number + '').toUpperCase().includes(q) ||
+        (c.name || '').toUpperCase().includes(q) ||
+        (c.parking_spot || '').toUpperCase().includes(q)
+      )
+    : pool;
+  const sel = document.getElementById('car-select');
+  if (filtered.length === 0) {
+    sel.innerHTML = '<option value="">— No cars match "' + query.trim() + '" —</option>';
+  } else {
+    const label = q
+      ? '— ' + filtered.length + ' result' + (filtered.length === 1 ? '' : 's') + ' —'
+      : currentLane
+        ? '— Select a car (' + filtered.length + ' in Lane ' + currentLane + ') —'
+        : '— Select a car —';
+    sel.innerHTML = '<option value="">' + label + '</option>' +
+      filtered.map(c => `<option value="${c.car_number}">#${c.car_number} — ${c.name} (${c.parking_spot})</option>`).join('');
+  }
+}
+
 function selectLane(lane, btn) {
   currentLane = lane;
   document.querySelectorAll('.lane-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
-  const laneCars = allCars
-    .filter(c => c.parking_spot && c.parking_spot.toUpperCase().startsWith(lane.toUpperCase()))
-    .sort((a,b) => a.parking_spot.localeCompare(b.parking_spot));
+  // Clear search box and repopulate dropdown
+  const searchEl = document.getElementById('car-search');
+  if (searchEl) { searchEl.value = ''; searchEl.style.borderColor = '#2a2a2a'; }
+  const laneCars = laneScopedCars();
   const sel = document.getElementById('car-select');
   sel.innerHTML = laneCars.length
     ? '<option value="">— Select a car (' + laneCars.length + ' in Lane ' + lane + ') —</option>' +
