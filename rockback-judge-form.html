@@ -313,7 +313,11 @@ async function loadAllCars() {
 function laneScopedCars() {
   if (!currentLane) return allCars;
   return allCars.filter(c => c.parking_spot && c.parking_spot.toUpperCase().startsWith(currentLane.toUpperCase()))
-                .sort((a,b) => a.parking_spot.localeCompare(b.parking_spot));
+                .sort((a,b) => {
+                  const numA = parseInt((a.parking_spot || '').replace(/\D/g,'')) || 0;
+                  const numB = parseInt((b.parking_spot || '').replace(/\D/g,'')) || 0;
+                  return numA - numB;
+                });
 }
 
 function filterCars(query) {
@@ -347,7 +351,7 @@ function selectLane(lane, btn) {
   // Clear search box and repopulate dropdown
   const searchEl = document.getElementById('car-search');
   if (searchEl) { searchEl.value = ''; searchEl.style.borderColor = '#2a2a2a'; }
-  const laneCars = laneScopedCars();
+  const laneCars = laneScopedCars(); // already sorted A1, A2, A3…
   const sel = document.getElementById('car-select');
   sel.innerHTML = laneCars.length
     ? '<option value="">— Select a car (' + laneCars.length + ' in Lane ' + lane + ') —</option>' +
