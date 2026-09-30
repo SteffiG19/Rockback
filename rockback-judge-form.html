@@ -340,7 +340,7 @@ function filterCars(query) {
         ? '— Select a car (' + filtered.length + ' in Lane ' + currentLane + ') —'
         : '— Select a car —';
     sel.innerHTML = '<option value="">' + label + '</option>' +
-      filtered.map(c => `<option value="${c.car_number}">#${c.car_number} — ${c.name} (${c.parking_spot})</option>`).join('');
+      filtered.map(c => `<option value="${c.car_number}">${c.parking_spot} — ${c.name} (#${c.car_number})</option>`).join('');
   }
 }
 
@@ -357,7 +357,7 @@ async function selectLane(lane, btn) {
   const sel = document.getElementById('car-select');
   sel.innerHTML = laneCars.length
     ? '<option value="">— Select a car (' + laneCars.length + ' in Lane ' + lane + ') —</option>' +
-      laneCars.map(c => `<option value="${c.car_number}">#${c.car_number} — ${c.name} (${c.parking_spot})</option>`).join('')
+      laneCars.map(c => `<option value="${c.car_number}">${c.parking_spot} — ${c.name} (#${c.car_number})</option>`).join('')
     : '<option value="">— No cars registered in Lane ' + lane + ' —</option>';
   document.getElementById('car-info-card').classList.remove('show');
   document.getElementById('not-found').classList.remove('show');
@@ -378,7 +378,7 @@ async function onCarSelect(carNum) {
   const car = allCars.find(c => c.car_number === carNum);
   if (!car) { notFound.classList.add('show'); return; }
   currentCar = car;
-  document.getElementById('car-info-name').textContent = car.name + '  —  #' + car.car_number;
+  document.getElementById('car-info-name').textContent = (car.parking_spot ? car.parking_spot + '  —  ' : '') + car.name + '  (#' + car.car_number + ')';
   document.getElementById('car-info-vehicle').textContent = [car.year, car.make, car.model].filter(Boolean).join(' ') || '';
   document.getElementById('car-info-spot').textContent = car.parking_spot ? '🅿 Spot ' + car.parking_spot : '';
 

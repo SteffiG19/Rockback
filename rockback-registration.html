@@ -126,8 +126,8 @@
 </header>
 <main>
   <div class="card">
-    <div class="card-label">Car Number</div>
-    <input type="text" id="car-number" placeholder="e.g. A12 or 042"
+    <div class="card-label">License Plate</div>
+    <input type="text" id="car-number" placeholder="e.g. PAB 1234"
       maxlength="10" autocomplete="off" autocorrect="off"
       autocapitalize="characters" spellcheck="false"
       oninput="this.value=this.value.toUpperCase()"/>
@@ -182,7 +182,7 @@
 <div class="toast" id="toast"></div>
 <script>
 const SHEET_URL = "https://script.google.com/macros/s/AKfycbynxTbwFabFadw2jB_2abF9QS-gqtGtG_iBzB3N-_tEGyU_PpWOrBIHB2hwSedjplw/exec";
-const FEE_PER_CAT = 50;
+const FEE_PER_CAT = 100;
 const LOCAL_KEY = 'rockback_registrations';
 const CATS = {
   static:  ['Low with Standards 18','Low with Standards 20','Best Stance'],
