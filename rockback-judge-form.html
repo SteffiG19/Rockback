@@ -344,14 +344,16 @@ function filterCars(query) {
   }
 }
 
-function selectLane(lane, btn) {
+async function selectLane(lane, btn) {
   currentLane = lane;
   document.querySelectorAll('.lane-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
-  // Clear search box and repopulate dropdown
+  // Clear search box
   const searchEl = document.getElementById('car-search');
   if (searchEl) { searchEl.value = ''; searchEl.style.borderColor = '#2a2a2a'; }
-  const laneCars = laneScopedCars(); // already sorted A1, A2, A3…
+  // Re-fetch if cars haven't loaded yet
+  if (!allCars.length) await loadAllCars();
+  const laneCars = laneScopedCars();
   const sel = document.getElementById('car-select');
   sel.innerHTML = laneCars.length
     ? '<option value="">— Select a car (' + laneCars.length + ' in Lane ' + lane + ') —</option>' +
